@@ -116,10 +116,7 @@ export default function LibraryLayout({ children, title, role, active, header }:
                     <header className="flex flex-col gap-6 lg:flex-row lg:items-center lg:justify-between">
                         <div className="flex items-center gap-4">
                             <LogoMark subtitle={roleLabel[role]} />
-                            <div className="hidden sm:block">
-                                <p className="text-sm text-slate-400">{roleLabel[role]}</p>
-                                <p className="text-xs text-slate-500">Real-time library operations</p>
-                            </div>
+                           
                         </div>
                         <nav className="hidden flex-wrap items-center gap-2 rounded-full border border-[#1f2a3d] bg-[#141c2a]/90 p-2 shadow-[0_18px_45px_rgba(2,6,23,0.45)] backdrop-blur lg:flex">
                             {navItems.map((item) => {
@@ -215,10 +212,6 @@ export default function LibraryLayout({ children, title, role, active, header }:
                                 <LogOut className="h-4 w-4" />
                                 Logout
                             </Link>
-                            <div className="hidden sm:flex flex-col text-right">
-                                <span className="text-sm font-semibold text-white">Welcome back</span>
-                                <span className="text-xs text-slate-400">Library operations ready</span>
-                            </div>
                         </div>
                     </header>
                     {header ? <div>{header}</div> : null}
