@@ -1,4 +1,6 @@
 import LibraryLayout from '@/layouts/library-layout';
+import { Dialog, DialogContent, DialogDescription, DialogFooter, DialogHeader, DialogTitle, DialogTrigger } from '@/components/ui/dialog';
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { Download, Star, TriangleAlert } from 'lucide-react';
 
 const popular = [
@@ -21,10 +23,49 @@ export default function LibrarianReports() {
                     <h1 className="text-4xl font-semibold text-white">Reports & Analytics</h1>
                     <p className="text-sm text-slate-400">Monitor trends and export operational reports.</p>
                 </div>
-                <button className="inline-flex items-center gap-2 rounded-full bg-emerald-400 px-5 py-2 text-sm font-semibold text-emerald-950 shadow-[0_12px_30px_rgba(16,185,129,0.35)]">
-                    <Download className="h-4 w-4" />
-                    Export Reports
-                </button>
+                <Dialog>
+                    <DialogTrigger asChild>
+                        <button className="inline-flex items-center gap-2 rounded-full bg-emerald-400 px-5 py-2 text-sm font-semibold text-emerald-950 shadow-[0_12px_30px_rgba(16,185,129,0.35)]">
+                            <Download className="h-4 w-4" />
+                            Export Reports
+                        </button>
+                    </DialogTrigger>
+                    <DialogContent className="border-[#1f2a3d] bg-[#0f172a] text-slate-100">
+                        <DialogHeader>
+                            <DialogTitle>Export Reports</DialogTitle>
+                            <DialogDescription className="text-slate-400">
+                                Select a report range and export format.
+                            </DialogDescription>
+                        </DialogHeader>
+                        <div className="grid gap-4">
+                            <Select defaultValue="last-30">
+                                <SelectTrigger className="border-[#1f2a3d] bg-[#141c2a] text-slate-200">
+                                    <SelectValue placeholder="Range" />
+                                </SelectTrigger>
+                                <SelectContent className="border-[#1f2a3d] bg-[#0f172a] text-slate-100">
+                                    <SelectItem value="last-7">Last 7 days</SelectItem>
+                                    <SelectItem value="last-30">Last 30 days</SelectItem>
+                                    <SelectItem value="quarter">Quarter to date</SelectItem>
+                                </SelectContent>
+                            </Select>
+                            <Select defaultValue="pdf">
+                                <SelectTrigger className="border-[#1f2a3d] bg-[#141c2a] text-slate-200">
+                                    <SelectValue placeholder="Format" />
+                                </SelectTrigger>
+                                <SelectContent className="border-[#1f2a3d] bg-[#0f172a] text-slate-100">
+                                    <SelectItem value="pdf">PDF</SelectItem>
+                                    <SelectItem value="csv">CSV</SelectItem>
+                                    <SelectItem value="xlsx">Excel</SelectItem>
+                                </SelectContent>
+                            </Select>
+                        </div>
+                        <DialogFooter>
+                            <button className="rounded-full border border-emerald-400 px-4 py-2 text-sm font-semibold text-emerald-200">
+                                Export Now
+                            </button>
+                        </DialogFooter>
+                    </DialogContent>
+                </Dialog>
             </section>
 
             <section className="grid gap-6 lg:grid-cols-3">

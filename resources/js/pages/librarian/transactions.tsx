@@ -1,5 +1,9 @@
 import LibraryLayout from '@/layouts/library-layout';
-import { ArrowDownLeft, ArrowUpRight, RefreshCcw } from 'lucide-react';
+import { Dialog, DialogContent, DialogDescription, DialogFooter, DialogHeader, DialogTitle, DialogTrigger } from '@/components/ui/dialog';
+import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigger } from '@/components/ui/dropdown-menu';
+import { Input } from '@/components/ui/input';
+import { Label } from '@/components/ui/label';
+import { ArrowDownLeft, ArrowUpRight, MoreHorizontal, RefreshCcw } from 'lucide-react';
 
 const quickActions = [
     {
@@ -35,12 +39,70 @@ export default function LibrarianTransactions() {
                         <p className="text-sm text-slate-400">Issue, return, and renew books seamlessly.</p>
                     </div>
                     <div className="flex flex-wrap gap-3">
-                        <button className="rounded-full bg-emerald-400 px-5 py-2 text-sm font-semibold text-emerald-950 shadow-[0_12px_30px_rgba(16,185,129,0.35)]">
-                            Issue Book
-                        </button>
-                        <button className="rounded-full bg-emerald-400/20 px-5 py-2 text-sm font-semibold text-emerald-200 ring-1 ring-emerald-400/30">
-                            Return Book
-                        </button>
+                        <Dialog>
+                            <DialogTrigger asChild>
+                                <button className="rounded-full bg-emerald-400 px-5 py-2 text-sm font-semibold text-emerald-950 shadow-[0_12px_30px_rgba(16,185,129,0.35)]">
+                                    Issue Book
+                                </button>
+                            </DialogTrigger>
+                            <DialogContent className="border-[#1f2a3d] bg-[#0f172a] text-slate-100">
+                                <DialogHeader>
+                                    <DialogTitle>Issue Book</DialogTitle>
+                                    <DialogDescription className="text-slate-400">
+                                        Assign a book to a member and set the due date.
+                                    </DialogDescription>
+                                </DialogHeader>
+                                <div className="grid gap-4">
+                                    <div className="grid gap-2">
+                                        <Label htmlFor="issue-member">Member ID</Label>
+                                        <Input id="issue-member" placeholder="MB-1024" className="bg-[#141c2a]" />
+                                    </div>
+                                    <div className="grid gap-2">
+                                        <Label htmlFor="issue-book">Book ISBN</Label>
+                                        <Input id="issue-book" placeholder="978-0-06-112241-5" className="bg-[#141c2a]" />
+                                    </div>
+                                    <div className="grid gap-2">
+                                        <Label htmlFor="issue-due">Due Date</Label>
+                                        <Input id="issue-due" type="date" className="bg-[#141c2a]" />
+                                    </div>
+                                </div>
+                                <DialogFooter>
+                                    <button className="rounded-full border border-emerald-400 px-4 py-2 text-sm font-semibold text-emerald-200">
+                                        Issue Now
+                                    </button>
+                                </DialogFooter>
+                            </DialogContent>
+                        </Dialog>
+                        <Dialog>
+                            <DialogTrigger asChild>
+                                <button className="rounded-full bg-emerald-400/20 px-5 py-2 text-sm font-semibold text-emerald-200 ring-1 ring-emerald-400/30">
+                                    Return Book
+                                </button>
+                            </DialogTrigger>
+                            <DialogContent className="border-[#1f2a3d] bg-[#0f172a] text-slate-100">
+                                <DialogHeader>
+                                    <DialogTitle>Return Book</DialogTitle>
+                                    <DialogDescription className="text-slate-400">
+                                        Confirm the return of a borrowed item.
+                                    </DialogDescription>
+                                </DialogHeader>
+                                <div className="grid gap-4">
+                                    <div className="grid gap-2">
+                                        <Label htmlFor="return-transaction">Transaction ID</Label>
+                                        <Input id="return-transaction" placeholder="TX-9012" className="bg-[#141c2a]" />
+                                    </div>
+                                    <div className="grid gap-2">
+                                        <Label htmlFor="return-condition">Condition Notes</Label>
+                                        <Input id="return-condition" placeholder="Good condition" className="bg-[#141c2a]" />
+                                    </div>
+                                </div>
+                                <DialogFooter>
+                                    <button className="rounded-full border border-emerald-400 px-4 py-2 text-sm font-semibold text-emerald-200">
+                                        Confirm Return
+                                    </button>
+                                </DialogFooter>
+                            </DialogContent>
+                        </Dialog>
                     </div>
                 </div>
             </section>
@@ -49,23 +111,45 @@ export default function LibrarianTransactions() {
                 {quickActions.map((action) => {
                     const Icon = action.icon;
                     return (
-                        <div
-                            key={action.title}
-                            className="rounded-3xl border border-[#1f2a3d] bg-white p-6 text-slate-900 shadow-[0_16px_40px_rgba(2,6,23,0.25)]"
-                        >
-                            <div className="flex items-center gap-4">
-                                <div className={`flex h-12 w-12 items-center justify-center rounded-2xl ${action.color}`}>
-                                    <Icon className="h-5 w-5" />
+                        <Dialog key={action.title}>
+                            <DialogTrigger asChild>
+                                <div className="cursor-pointer rounded-3xl border border-[#1f2a3d] bg-white p-6 text-slate-900 shadow-[0_16px_40px_rgba(2,6,23,0.25)]">
+                                    <div className="flex items-center gap-4">
+                                        <div className={`flex h-12 w-12 items-center justify-center rounded-2xl ${action.color}`}>
+                                            <Icon className="h-5 w-5" />
+                                        </div>
+                                        <div>
+                                            <p className="text-lg font-semibold">{action.title}</p>
+                                            <p className="text-sm text-slate-500">{action.subtitle}</p>
+                                        </div>
+                                    </div>
+                                    <button className="mt-5 rounded-full border border-emerald-400 px-4 py-2 text-sm font-semibold text-emerald-600">
+                                        {action.button}
+                                    </button>
                                 </div>
-                                <div>
-                                    <p className="text-lg font-semibold">{action.title}</p>
-                                    <p className="text-sm text-slate-500">{action.subtitle}</p>
+                            </DialogTrigger>
+                            <DialogContent className="border-[#1f2a3d] bg-[#0f172a] text-slate-100">
+                                <DialogHeader>
+                                    <DialogTitle>{action.title}</DialogTitle>
+                                    <DialogDescription className="text-slate-400">Complete the transaction details.</DialogDescription>
+                                </DialogHeader>
+                                <div className="grid gap-4">
+                                    <div className="grid gap-2">
+                                        <Label htmlFor={`${action.title}-member`}>Member ID</Label>
+                                        <Input id={`${action.title}-member`} placeholder="MB-1024" className="bg-[#141c2a]" />
+                                    </div>
+                                    <div className="grid gap-2">
+                                        <Label htmlFor={`${action.title}-book`}>Book ISBN</Label>
+                                        <Input id={`${action.title}-book`} placeholder="978-0-06-112241-5" className="bg-[#141c2a]" />
+                                    </div>
                                 </div>
-                            </div>
-                            <button className="mt-5 rounded-full border border-emerald-400 px-4 py-2 text-sm font-semibold text-emerald-600">
-                                {action.button}
-                            </button>
-                        </div>
+                                <DialogFooter>
+                                    <button className="rounded-full border border-emerald-400 px-4 py-2 text-sm font-semibold text-emerald-200">
+                                        Confirm
+                                    </button>
+                                </DialogFooter>
+                            </DialogContent>
+                        </Dialog>
                     );
                 })}
             </section>
@@ -101,8 +185,28 @@ export default function LibrarianTransactions() {
                     <span>Status</span>
                     <span>Actions</span>
                 </div>
-                <div className="mt-4 flex h-40 items-center justify-center rounded-2xl border border-dashed border-[#1f2a3d] text-sm text-slate-500">
-                    Transactions will appear here.
+                <div className="mt-4 grid grid-cols-[160px_repeat(6,1fr)_140px] items-center gap-2 rounded-2xl border border-[#1f2a3d] bg-[#1a2436]/80 px-4 py-3 text-sm text-slate-200">
+                    <span>TX-2031</span>
+                    <span>Jamie Lee</span>
+                    <span>The Alchemist</span>
+                    <span>Issue</span>
+                    <span>Nov 28, 2025</span>
+                    <span>Dec 28, 2025</span>
+                    <span className="text-emerald-300">Active</span>
+                    <div>
+                        <DropdownMenu>
+                            <DropdownMenuTrigger asChild>
+                                <button className="rounded-full border border-[#1f2a3d] p-2 text-slate-300">
+                                    <MoreHorizontal className="h-4 w-4" />
+                                </button>
+                            </DropdownMenuTrigger>
+                            <DropdownMenuContent className="border-[#1f2a3d] bg-[#0f172a] text-slate-100">
+                                <DropdownMenuItem>View details</DropdownMenuItem>
+                                <DropdownMenuItem>Mark returned</DropdownMenuItem>
+                                <DropdownMenuItem>Send reminder</DropdownMenuItem>
+                            </DropdownMenuContent>
+                        </DropdownMenu>
+                    </div>
                 </div>
             </section>
         </LibraryLayout>

@@ -1,4 +1,5 @@
 import LibraryLayout from '@/layouts/library-layout';
+import { Dialog, DialogContent, DialogDescription, DialogFooter, DialogHeader, DialogTitle, DialogTrigger } from '@/components/ui/dialog';
 import { Download } from 'lucide-react';
 
 const reports = [
@@ -21,10 +22,30 @@ export default function AdminReports() {
                     <h1 className="text-4xl font-semibold text-white">Reports & Analytics</h1>
                     <p className="text-sm text-slate-400">Generate insights on usage, fines, and trends.</p>
                 </div>
-                <button className="inline-flex items-center gap-2 rounded-full bg-emerald-400 px-5 py-2 text-sm font-semibold text-emerald-950">
-                    <Download className="h-4 w-4" />
-                    Export Reports
-                </button>
+                <Dialog>
+                    <DialogTrigger asChild>
+                        <button className="inline-flex items-center gap-2 rounded-full bg-emerald-400 px-5 py-2 text-sm font-semibold text-emerald-950">
+                            <Download className="h-4 w-4" />
+                            Export Reports
+                        </button>
+                    </DialogTrigger>
+                    <DialogContent className="border-[#1f2a3d] bg-[#0f172a] text-slate-100">
+                        <DialogHeader>
+                            <DialogTitle>Export Reports</DialogTitle>
+                            <DialogDescription className="text-slate-400">
+                                Choose a report and export format.
+                            </DialogDescription>
+                        </DialogHeader>
+                        <div className="rounded-xl border border-[#1f2a3d] bg-[#141c2a] p-4 text-sm text-slate-300">
+                            Exported reports will be available in the downloads center.
+                        </div>
+                        <DialogFooter>
+                            <button className="rounded-full border border-emerald-400 px-4 py-2 text-sm font-semibold text-emerald-200">
+                                Export
+                            </button>
+                        </DialogFooter>
+                    </DialogContent>
+                </Dialog>
             </section>
 
             <section className="grid gap-6 lg:grid-cols-[1.1fr_0.9fr]">
@@ -32,18 +53,35 @@ export default function AdminReports() {
                     <h2 className="text-lg font-semibold text-white">Report Center</h2>
                     <div className="mt-5 space-y-4">
                         {reports.map((report) => (
-                            <div
-                                key={report.title}
-                                className="flex flex-wrap items-center justify-between gap-4 rounded-2xl border border-[#1f2a3d] bg-[#1a2436]/80 p-4"
-                            >
-                                <div>
-                                    <p className="text-sm font-semibold text-white">{report.title}</p>
-                                    <p className="text-xs text-slate-400">{report.metric}</p>
+                            <Dialog key={report.title}>
+                                <div className="flex flex-wrap items-center justify-between gap-4 rounded-2xl border border-[#1f2a3d] bg-[#1a2436]/80 p-4">
+                                    <div>
+                                        <p className="text-sm font-semibold text-white">{report.title}</p>
+                                        <p className="text-xs text-slate-400">{report.metric}</p>
+                                    </div>
+                                    <DialogTrigger asChild>
+                                        <button className="rounded-full border border-emerald-400 px-3 py-1 text-xs font-semibold text-emerald-200">
+                                            {report.action}
+                                        </button>
+                                    </DialogTrigger>
                                 </div>
-                                <button className="rounded-full border border-emerald-400 px-3 py-1 text-xs font-semibold text-emerald-200">
-                                    {report.action}
-                                </button>
-                            </div>
+                                <DialogContent className="border-[#1f2a3d] bg-[#0f172a] text-slate-100">
+                                    <DialogHeader>
+                                        <DialogTitle>{report.title}</DialogTitle>
+                                        <DialogDescription className="text-slate-400">
+                                            Generate and review this report.
+                                        </DialogDescription>
+                                    </DialogHeader>
+                                    <div className="rounded-xl border border-[#1f2a3d] bg-[#141c2a] p-4 text-sm text-slate-300">
+                                        Report generation will run in the background.
+                                    </div>
+                                    <DialogFooter>
+                                        <button className="rounded-full border border-emerald-400 px-4 py-2 text-sm font-semibold text-emerald-200">
+                                            Run Report
+                                        </button>
+                                    </DialogFooter>
+                                </DialogContent>
+                            </Dialog>
                         ))}
                     </div>
                 </div>

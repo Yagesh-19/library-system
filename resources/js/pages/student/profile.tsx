@@ -1,4 +1,7 @@
 import LibraryLayout from '@/layouts/library-layout';
+import { Dialog, DialogContent, DialogDescription, DialogFooter, DialogHeader, DialogTitle, DialogTrigger } from '@/components/ui/dialog';
+import { Input } from '@/components/ui/input';
+import { Label } from '@/components/ui/label';
 
 const history = [
     { title: 'The Alchemist', action: 'Returned', date: 'Feb 12, 2026' },
@@ -30,9 +33,40 @@ export default function StudentProfile() {
                             <span className="text-slate-400">Email</span>
                             <span className="text-white">yagesh@example.com</span>
                         </div>
-                        <button className="mt-4 rounded-full bg-emerald-400 px-4 py-2 text-sm font-semibold text-emerald-950">
-                            Edit Profile
-                        </button>
+                        <Dialog>
+                            <DialogTrigger asChild>
+                                <button className="mt-4 rounded-full bg-emerald-400 px-4 py-2 text-sm font-semibold text-emerald-950">
+                                    Edit Profile
+                                </button>
+                            </DialogTrigger>
+                            <DialogContent className="border-[#1f2a3d] bg-[#0f172a] text-slate-100">
+                                <DialogHeader>
+                                    <DialogTitle>Edit Profile</DialogTitle>
+                                    <DialogDescription className="text-slate-400">
+                                        Update your personal details.
+                                    </DialogDescription>
+                                </DialogHeader>
+                                <div className="grid gap-4">
+                                    <div className="grid gap-2">
+                                        <Label htmlFor="profile-name">Name</Label>
+                                        <Input id="profile-name" defaultValue="Yagesh Alageshan" className="bg-[#141c2a]" />
+                                    </div>
+                                    <div className="grid gap-2">
+                                        <Label htmlFor="profile-email">Email</Label>
+                                        <Input id="profile-email" defaultValue="yagesh@example.com" className="bg-[#141c2a]" />
+                                    </div>
+                                    <div className="grid gap-2">
+                                        <Label htmlFor="profile-id">Student ID</Label>
+                                        <Input id="profile-id" defaultValue="ST-2045" className="bg-[#141c2a]" />
+                                    </div>
+                                </div>
+                                <DialogFooter>
+                                    <button className="rounded-full border border-emerald-400 px-4 py-2 text-sm font-semibold text-emerald-200">
+                                        Save Changes
+                                    </button>
+                                </DialogFooter>
+                            </DialogContent>
+                        </Dialog>
                     </div>
                 </div>
 

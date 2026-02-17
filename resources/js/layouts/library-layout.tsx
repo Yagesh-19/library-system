@@ -8,12 +8,23 @@ import {
     FileText,
     Gauge,
     Lock,
+    LogOut,
+    Menu,
     Search,
     Settings,
     ShieldCheck,
     Users,
 } from 'lucide-react';
 import type { ComponentType, PropsWithChildren, ReactNode } from 'react';
+import { useState } from 'react';
+import {
+    Sheet,
+    SheetContent,
+    SheetDescription,
+    SheetHeader,
+    SheetTitle,
+    SheetTrigger,
+} from '@/components/ui/sheet';
 
 export type LibraryRole = 'librarian' | 'admin' | 'student';
 
@@ -94,13 +105,14 @@ function LogoMark({ subtitle }: { subtitle: string }) {
 
 export default function LibraryLayout({ children, title, role, active, header }: LibraryLayoutProps) {
     const navItems = navByRole[role];
+    const [mobileOpen, setMobileOpen] = useState(false);
 
     return (
         <div className="min-h-screen bg-[#0b1220] text-slate-100">
             <Head title={title} />
             <div className="relative overflow-hidden">
                 <div className="pointer-events-none absolute inset-0 bg-[radial-gradient(circle_at_top,_rgba(46,195,130,0.15),_transparent_45%),radial-gradient(circle_at_20%_20%,_rgba(56,189,248,0.1),_transparent_35%),radial-gradient(circle_at_80%_0%,_rgba(99,102,241,0.12),_transparent_40%)]" />
-                <div className="relative mx-auto flex min-h-screen w-full max-w-7xl flex-col gap-8 px-6 py-6 lg:px-10 lg:py-8 font-display">
+                <div className="relative mx-auto flex min-h-screen w-full max-w-7xl flex-col gap-8 px-6 py-6 font-display lg:px-10 lg:py-8">
                     <header className="flex flex-col gap-6 lg:flex-row lg:items-center lg:justify-between">
                         <div className="flex items-center gap-4">
                             <LogoMark subtitle={roleLabel[role]} />
@@ -109,7 +121,7 @@ export default function LibraryLayout({ children, title, role, active, header }:
                                 <p className="text-xs text-slate-500">Real-time library operations</p>
                             </div>
                         </div>
-                        <nav className="flex flex-wrap items-center gap-2 rounded-full border border-[#1f2a3d] bg-[#141c2a]/90 p-2 shadow-[0_18px_45px_rgba(2,6,23,0.45)] backdrop-blur">
+                        <nav className="hidden flex-wrap items-center gap-2 rounded-full border border-[#1f2a3d] bg-[#141c2a]/90 p-2 shadow-[0_18px_45px_rgba(2,6,23,0.45)] backdrop-blur lg:flex">
                             {navItems.map((item) => {
                                 const Icon = item.icon;
                                 return (
@@ -130,6 +142,62 @@ export default function LibraryLayout({ children, title, role, active, header }:
                             })}
                         </nav>
                         <div className="flex items-center gap-3">
+                            <Sheet open={mobileOpen} onOpenChange={setMobileOpen}>
+                                <SheetTrigger asChild>
+                                    <button className="inline-flex items-center gap-2 rounded-full border border-[#1f2a3d] bg-[#141c2a]/90 px-4 py-2 text-sm text-slate-200 shadow-[0_12px_30px_rgba(2,6,23,0.45)] lg:hidden">
+                                        <Menu className="h-4 w-4" />
+                                        Menu
+                                    </button>
+                                </SheetTrigger>
+                                <SheetContent side="left" className="border-[#1f2a3d] bg-[#0f172a] text-slate-100">
+                                    <SheetHeader>
+                                        <SheetTitle className="text-white">LibraryMS</SheetTitle>
+                                        <SheetDescription className="text-slate-400">
+                                            Navigate your workspace
+                                        </SheetDescription>
+                                    </SheetHeader>
+                                    <div className="mt-4 flex flex-col gap-2">
+                                        {navItems.map((item) => {
+                                            const Icon = item.icon;
+                                            return (
+                                                <Link
+                                                    key={item.id}
+                                                    href={item.href}
+                                                    className={cn(
+                                                        'flex items-center gap-3 rounded-xl px-3 py-2 text-sm font-semibold transition',
+                                                        active === item.id
+                                                            ? 'bg-emerald-400 text-emerald-950'
+                                                            : 'text-slate-300 hover:bg-white/5 hover:text-white',
+                                                    )}
+                                                    onClick={() => setMobileOpen(false)}
+                                                >
+                                                    <Icon className="h-4 w-4" />
+                                                    {item.label}
+                                                </Link>
+                                            );
+                                        })}
+                                    </div>
+                                    <div className="mt-6 flex flex-col gap-3 border-t border-[#1f2a3d] pt-4">
+                                        <span
+                                            className={cn(
+                                                'w-fit rounded-full border px-3 py-1 text-xs font-semibold uppercase tracking-wide',
+                                                roleBadge[role],
+                                            )}
+                                        >
+                                            {role}
+                                        </span>
+                                        <Link
+                                            href="/logout"
+                                            method="post"
+                                            as="button"
+                                            className="inline-flex items-center gap-2 rounded-full border border-emerald-400/60 px-4 py-2 text-sm font-semibold text-emerald-200"
+                                        >
+                                            <LogOut className="h-4 w-4" />
+                                            Logout
+                                        </Link>
+                                    </div>
+                                </SheetContent>
+                            </Sheet>
                             <span
                                 className={cn(
                                     'rounded-full border px-3 py-1 text-xs font-semibold uppercase tracking-wide',
@@ -138,6 +206,19 @@ export default function LibraryLayout({ children, title, role, active, header }:
                             >
                                 {role}
                             </span>
+                            <Link
+                                href="/logout"
+                                method="post"
+                                as="button"
+                                className="hidden items-center gap-2 rounded-full border border-emerald-400/60 px-4 py-2 text-sm font-semibold text-emerald-200 lg:inline-flex"
+                            >
+                                <LogOut className="h-4 w-4" />
+                                Logout
+                            </Link>
+                            <div className="hidden sm:flex flex-col text-right">
+                                <span className="text-sm font-semibold text-white">Welcome back</span>
+                                <span className="text-xs text-slate-400">Library operations ready</span>
+                            </div>
                         </div>
                     </header>
                     {header ? <div>{header}</div> : null}

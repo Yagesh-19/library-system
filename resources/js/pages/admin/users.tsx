@@ -1,5 +1,10 @@
 import LibraryLayout from '@/layouts/library-layout';
-import { UserPlus } from 'lucide-react';
+import { Dialog, DialogContent, DialogDescription, DialogFooter, DialogHeader, DialogTitle, DialogTrigger } from '@/components/ui/dialog';
+import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigger } from '@/components/ui/dropdown-menu';
+import { Input } from '@/components/ui/input';
+import { Label } from '@/components/ui/label';
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
+import { MoreHorizontal, UserPlus } from 'lucide-react';
 
 export default function AdminUsers() {
     return (
@@ -9,10 +14,41 @@ export default function AdminUsers() {
                     <h1 className="text-4xl font-semibold text-white">User Management</h1>
                     <p className="text-sm text-slate-400">Add, remove, and approve library users.</p>
                 </div>
-                <button className="inline-flex items-center gap-2 rounded-full bg-emerald-400 px-5 py-2 text-sm font-semibold text-emerald-950">
-                    <UserPlus className="h-4 w-4" />
-                    Add User
-                </button>
+                <Dialog>
+                    <DialogTrigger asChild>
+                        <button className="inline-flex items-center gap-2 rounded-full bg-emerald-400 px-5 py-2 text-sm font-semibold text-emerald-950">
+                            <UserPlus className="h-4 w-4" />
+                            Add User
+                        </button>
+                    </DialogTrigger>
+                    <DialogContent className="border-[#1f2a3d] bg-[#0f172a] text-slate-100">
+                        <DialogHeader>
+                            <DialogTitle>Add User</DialogTitle>
+                            <DialogDescription className="text-slate-400">
+                                Create a new user account and assign a role.
+                            </DialogDescription>
+                        </DialogHeader>
+                        <div className="grid gap-4">
+                            <div className="grid gap-2">
+                                <Label htmlFor="user-name">Name</Label>
+                                <Input id="user-name" placeholder="Full name" className="bg-[#141c2a]" />
+                            </div>
+                            <div className="grid gap-2">
+                                <Label htmlFor="user-email">Email</Label>
+                                <Input id="user-email" placeholder="user@example.com" className="bg-[#141c2a]" />
+                            </div>
+                            <div className="grid gap-2">
+                                <Label htmlFor="user-role">Role</Label>
+                                <Input id="user-role" placeholder="Admin / Librarian / Student" className="bg-[#141c2a]" />
+                            </div>
+                        </div>
+                        <DialogFooter>
+                            <button className="rounded-full border border-emerald-400 px-4 py-2 text-sm font-semibold text-emerald-200">
+                                Create User
+                            </button>
+                        </DialogFooter>
+                    </DialogContent>
+                </Dialog>
             </section>
 
             <section className="rounded-3xl border border-[#1f2a3d] bg-[#141c2a]/80 p-6">
@@ -27,12 +63,28 @@ export default function AdminUsers() {
                         </div>
                     </div>
                     <div className="flex flex-wrap gap-3">
-                        <button className="rounded-xl border border-[#1f2a3d] bg-[#1a2436]/80 px-4 py-2 text-sm text-slate-300">
-                            All Roles
-                        </button>
-                        <button className="rounded-xl border border-[#1f2a3d] bg-[#1a2436]/80 px-4 py-2 text-sm text-slate-300">
-                            Status
-                        </button>
+                        <Select defaultValue="all-roles">
+                            <SelectTrigger className="w-[150px] border-[#1f2a3d] bg-[#1a2436]/80 text-slate-200">
+                                <SelectValue placeholder="All Roles" />
+                            </SelectTrigger>
+                            <SelectContent className="border-[#1f2a3d] bg-[#0f172a] text-slate-100">
+                                <SelectItem value="all-roles">All Roles</SelectItem>
+                                <SelectItem value="admin">Admin</SelectItem>
+                                <SelectItem value="librarian">Librarian</SelectItem>
+                                <SelectItem value="student">Student</SelectItem>
+                            </SelectContent>
+                        </Select>
+                        <Select defaultValue="status">
+                            <SelectTrigger className="w-[140px] border-[#1f2a3d] bg-[#1a2436]/80 text-slate-200">
+                                <SelectValue placeholder="Status" />
+                            </SelectTrigger>
+                            <SelectContent className="border-[#1f2a3d] bg-[#0f172a] text-slate-100">
+                                <SelectItem value="status">Status</SelectItem>
+                                <SelectItem value="active">Active</SelectItem>
+                                <SelectItem value="pending">Pending</SelectItem>
+                                <SelectItem value="disabled">Disabled</SelectItem>
+                            </SelectContent>
+                        </Select>
                     </div>
                 </div>
             </section>
@@ -46,8 +98,26 @@ export default function AdminUsers() {
                     <span>Status</span>
                     <span>Actions</span>
                 </div>
-                <div className="mt-4 flex h-40 items-center justify-center rounded-2xl border border-dashed border-[#1f2a3d] text-sm text-slate-500">
-                    User records will appear here.
+                <div className="mt-4 grid grid-cols-[160px_repeat(4,1fr)_140px] items-center gap-2 rounded-2xl border border-[#1f2a3d] bg-[#1a2436]/80 px-4 py-3 text-sm text-slate-200">
+                    <span>US-1002</span>
+                    <span>Alex Morgan</span>
+                    <span>alex@example.com</span>
+                    <span>Librarian</span>
+                    <span className="text-amber-300">Pending</span>
+                    <div>
+                        <DropdownMenu>
+                            <DropdownMenuTrigger asChild>
+                                <button className="rounded-full border border-[#1f2a3d] p-2 text-slate-300">
+                                    <MoreHorizontal className="h-4 w-4" />
+                                </button>
+                            </DropdownMenuTrigger>
+                            <DropdownMenuContent className="border-[#1f2a3d] bg-[#0f172a] text-slate-100">
+                                <DropdownMenuItem>Approve role</DropdownMenuItem>
+                                <DropdownMenuItem>Reset password</DropdownMenuItem>
+                                <DropdownMenuItem>Disable account</DropdownMenuItem>
+                            </DropdownMenuContent>
+                        </DropdownMenu>
+                    </div>
                 </div>
             </section>
         </LibraryLayout>

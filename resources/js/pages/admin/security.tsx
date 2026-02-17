@@ -1,4 +1,5 @@
 import LibraryLayout from '@/layouts/library-layout';
+import { Dialog, DialogContent, DialogDescription, DialogFooter, DialogHeader, DialogTitle, DialogTrigger } from '@/components/ui/dialog';
 
 const controls = [
     {
@@ -31,16 +32,33 @@ export default function AdminSecurity() {
 
             <section className="grid gap-6 lg:grid-cols-3">
                 {controls.map((control) => (
-                    <div
-                        key={control.title}
-                        className="rounded-3xl border border-[#1f2a3d] bg-[#141c2a]/80 p-6"
-                    >
-                        <h2 className="text-lg font-semibold text-white">{control.title}</h2>
-                        <p className="mt-2 text-sm text-slate-400">{control.description}</p>
-                        <button className="mt-6 rounded-full border border-emerald-400 px-4 py-2 text-sm font-semibold text-emerald-200">
-                            Review Settings
-                        </button>
-                    </div>
+                    <Dialog key={control.title}>
+                        <div className="rounded-3xl border border-[#1f2a3d] bg-[#141c2a]/80 p-6">
+                            <h2 className="text-lg font-semibold text-white">{control.title}</h2>
+                            <p className="mt-2 text-sm text-slate-400">{control.description}</p>
+                            <DialogTrigger asChild>
+                                <button className="mt-6 rounded-full border border-emerald-400 px-4 py-2 text-sm font-semibold text-emerald-200">
+                                    Review Settings
+                                </button>
+                            </DialogTrigger>
+                        </div>
+                        <DialogContent className="border-[#1f2a3d] bg-[#0f172a] text-slate-100">
+                            <DialogHeader>
+                                <DialogTitle>{control.title}</DialogTitle>
+                                <DialogDescription className="text-slate-400">
+                                    Security settings will be available in the next iteration.
+                                </DialogDescription>
+                            </DialogHeader>
+                            <div className="rounded-xl border border-[#1f2a3d] bg-[#141c2a] p-4 text-sm text-slate-300">
+                                This section will include advanced security controls.
+                            </div>
+                            <DialogFooter>
+                                <button className="rounded-full border border-emerald-400 px-4 py-2 text-sm font-semibold text-emerald-200">
+                                    Save Settings
+                                </button>
+                            </DialogFooter>
+                        </DialogContent>
+                    </Dialog>
                 ))}
             </section>
 

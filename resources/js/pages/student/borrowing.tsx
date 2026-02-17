@@ -1,4 +1,5 @@
 import LibraryLayout from '@/layouts/library-layout';
+import { Dialog, DialogContent, DialogDescription, DialogFooter, DialogHeader, DialogTitle, DialogTrigger } from '@/components/ui/dialog';
 import { RefreshCcw } from 'lucide-react';
 
 const borrowed = [
@@ -36,10 +37,30 @@ export default function StudentBorrowing() {
                                     <span className="rounded-full bg-amber-400/20 px-3 py-1 text-xs font-semibold text-amber-200">
                                         {book.status}
                                     </span>
-                                    <button className="inline-flex items-center gap-2 rounded-full border border-emerald-400 px-3 py-1 text-xs font-semibold text-emerald-200">
-                                        <RefreshCcw className="h-3 w-3" />
-                                        Renew
-                                    </button>
+                                    <Dialog>
+                                        <DialogTrigger asChild>
+                                            <button className="inline-flex items-center gap-2 rounded-full border border-emerald-400 px-3 py-1 text-xs font-semibold text-emerald-200">
+                                                <RefreshCcw className="h-3 w-3" />
+                                                Renew
+                                            </button>
+                                        </DialogTrigger>
+                                        <DialogContent className="border-[#1f2a3d] bg-[#0f172a] text-slate-100">
+                                            <DialogHeader>
+                                                <DialogTitle>Renew Book</DialogTitle>
+                                                <DialogDescription className="text-slate-400">
+                                                    Extend your borrowing period for “{book.title}”.
+                                                </DialogDescription>
+                                            </DialogHeader>
+                                            <div className="rounded-xl border border-[#1f2a3d] bg-[#141c2a] p-4 text-sm text-slate-300">
+                                                Renewals are subject to availability and borrowing rules.
+                                            </div>
+                                            <DialogFooter>
+                                                <button className="rounded-full border border-emerald-400 px-4 py-2 text-sm font-semibold text-emerald-200">
+                                                    Confirm Renewal
+                                                </button>
+                                            </DialogFooter>
+                                        </DialogContent>
+                                    </Dialog>
                                 </div>
                             </div>
                         ))}
@@ -56,9 +77,29 @@ export default function StudentBorrowing() {
                             >
                                 <p className="text-sm font-semibold text-white">{book.title}</p>
                                 <p className="text-xs text-slate-400">{book.status}</p>
-                                <button className="mt-3 rounded-full bg-emerald-400/20 px-3 py-1 text-xs font-semibold text-emerald-200">
-                                    Manage Hold
-                                </button>
+                                <Dialog>
+                                    <DialogTrigger asChild>
+                                        <button className="mt-3 rounded-full bg-emerald-400/20 px-3 py-1 text-xs font-semibold text-emerald-200">
+                                            Manage Hold
+                                        </button>
+                                    </DialogTrigger>
+                                    <DialogContent className="border-[#1f2a3d] bg-[#0f172a] text-slate-100">
+                                        <DialogHeader>
+                                            <DialogTitle>Manage Hold</DialogTitle>
+                                            <DialogDescription className="text-slate-400">
+                                                Update your reservation for “{book.title}”.
+                                            </DialogDescription>
+                                        </DialogHeader>
+                                        <div className="rounded-xl border border-[#1f2a3d] bg-[#141c2a] p-4 text-sm text-slate-300">
+                                            You can cancel or reschedule your pickup window.
+                                        </div>
+                                        <DialogFooter>
+                                            <button className="rounded-full border border-emerald-400 px-4 py-2 text-sm font-semibold text-emerald-200">
+                                                Update Reservation
+                                            </button>
+                                        </DialogFooter>
+                                    </DialogContent>
+                                </Dialog>
                             </div>
                         ))}
                     </div>
