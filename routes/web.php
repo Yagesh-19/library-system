@@ -10,10 +10,38 @@ Route::get('/', function () {
     ]);
 })->name('home');
 
+Route::middleware('guest')->group(function () {
+    Route::get('register/student', fn () => Inertia::render('auth/register-student'))->name('register.student');
+    Route::get('register/librarian', fn () => Inertia::render('auth/register-librarian'))->name('register.librarian');
+});
+
 Route::middleware(['auth', 'verified'])->group(function () {
     Route::get('dashboard', function () {
         return Inertia::render('dashboard');
     })->name('dashboard');
+
+    Route::prefix('librarian')->name('librarian.')->middleware('role:librarian')->group(function () {
+        Route::get('dashboard', fn () => Inertia::render('librarian/dashboard'))->name('dashboard');
+        Route::get('books', fn () => Inertia::render('librarian/books'))->name('books');
+        Route::get('members', fn () => Inertia::render('librarian/members'))->name('members');
+        Route::get('transactions', fn () => Inertia::render('librarian/transactions'))->name('transactions');
+        Route::get('reports', fn () => Inertia::render('librarian/reports'))->name('reports');
+    });
+
+    Route::prefix('student')->name('student.')->middleware('role:student')->group(function () {
+        Route::get('dashboard', fn () => Inertia::render('student/dashboard'))->name('dashboard');
+        Route::get('search', fn () => Inertia::render('student/search'))->name('search');
+        Route::get('borrowing', fn () => Inertia::render('student/borrowing'))->name('borrowing');
+        Route::get('profile', fn () => Inertia::render('student/profile'))->name('profile');
+    });
+
+    Route::prefix('admin')->name('admin.')->middleware('role:admin')->group(function () {
+        Route::get('dashboard', fn () => Inertia::render('admin/dashboard'))->name('dashboard');
+        Route::get('users', fn () => Inertia::render('admin/users'))->name('users');
+        Route::get('system', fn () => Inertia::render('admin/system'))->name('system');
+        Route::get('reports', fn () => Inertia::render('admin/reports'))->name('reports');
+        Route::get('security', fn () => Inertia::render('admin/security'))->name('security');
+    });
 });
 
 require __DIR__.'/settings.php';

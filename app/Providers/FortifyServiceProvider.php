@@ -12,6 +12,9 @@ use Illuminate\Support\Str;
 use Inertia\Inertia;
 use Laravel\Fortify\Features;
 use Laravel\Fortify\Fortify;
+use Laravel\Fortify\Contracts\LoginResponse;
+use Laravel\Fortify\Contracts\RegisterResponse;
+use App\Enums\UserRole;
 
 class FortifyServiceProvider extends ServiceProvider
 {
@@ -20,7 +23,35 @@ class FortifyServiceProvider extends ServiceProvider
      */
     public function register(): void
     {
-        //
+        $this->app->singleton(LoginResponse::class, function () {
+            return new class implements LoginResponse {
+                public function toResponse($request)
+                {
+                    $user = $request->user();
+
+                    return match ($user->role) {
+                        UserRole::Admin => redirect()->route('admin.dashboard'),
+                        UserRole::Librarian => redirect()->route('librarian.dashboard'),
+                        UserRole::Student => redirect()->route('student.dashboard'),
+                        default => redirect()->route('dashboard'),
+                    };
+                }
+            };
+        });
+
+        $this->app->instance(RegisterResponse::class, new class implements RegisterResponse {
+            public function toResponse($request)
+            {
+                $user = $request->user();
+
+                return match ($user->role) {
+                    UserRole::Admin => to_route('admin.dashboard'),
+                    UserRole::Librarian => to_route('librarian.dashboard'),
+                    UserRole::Student => to_route('student.dashboard'),
+                    default => to_route('dashboard'),
+                };
+            }
+        });
     }
 
     /**
