@@ -138,10 +138,6 @@ export default function LibraryLayout({ children, title, role, active, header }:
                             >
                                 {role}
                             </span>
-                            <div className="hidden sm:flex flex-col text-right">
-                                <span className="text-sm font-semibold text-white">Welcome back</span>
-                                <span className="text-xs text-slate-400">Library operations ready</span>
-                            </div>
                         </div>
                     </header>
                     {header ? <div>{header}</div> : null}
