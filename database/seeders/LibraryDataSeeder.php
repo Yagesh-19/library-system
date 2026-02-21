@@ -2,6 +2,7 @@
 
 namespace Database\Seeders;
 
+use App\Enums\UserRole;
 use App\Models\Book;
 use App\Models\Borrowing;
 use App\Models\Category;
@@ -9,7 +10,6 @@ use App\Models\LibraryNotification;
 use App\Models\Reservation;
 use App\Models\Student;
 use App\Models\User;
-use App\Enums\UserRole;
 use Illuminate\Database\Seeder;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Str;
@@ -60,10 +60,16 @@ class LibraryDataSeeder extends Seeder
                 'name' => 'mani',
                 'password' => Hash::make('qwerty123'),
                 'role' => UserRole::Student,
+                'is_active' => true,
+                'approved_at' => now(),
             ]
         );
 
-        $user->forceFill(['role' => UserRole::Student])->save();
+        $user->forceFill([
+            'role' => UserRole::Student,
+            'is_active' => true,
+            'approved_at' => $user->approved_at ?? now(),
+        ])->save();
 
         Student::firstOrCreate(
             ['user_id' => $user->id],

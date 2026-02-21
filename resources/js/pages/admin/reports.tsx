@@ -1,26 +1,20 @@
 import LibraryLayout from '@/layouts/library-layout';
 import { Dialog, DialogContent, DialogDescription, DialogFooter, DialogHeader, DialogTitle, DialogTrigger } from '@/components/ui/dialog';
+import { router } from '@inertiajs/react';
 import { Download } from 'lucide-react';
 
-const reports = [
-    { title: 'Most Borrowed Books', metric: 'Top 10 list', action: 'Generate' },
-    { title: 'Overdue Items', metric: '23 active cases', action: 'Review' },
-    { title: 'Fines Collected', metric: '$1,240 this month', action: 'Export' },
-];
+type ReportsProps = {
+    reports: { title: string; metric: string; action: string }[];
+    analytics: { label: string; value: string }[];
+};
 
-const analytics = [
-    { label: 'Daily Active Users', value: '74%' },
-    { label: 'Borrowing Completion', value: '68%' },
-    { label: 'Reservation Conversion', value: '41%' },
-];
-
-export default function AdminReports() {
+export default function AdminReports({ reports, analytics }: ReportsProps) {
     return (
         <LibraryLayout title="Reports & Analytics" role="admin" active="reports">
             <section className="flex flex-wrap items-center justify-between gap-4">
                 <div>
                     <h1 className="text-4xl font-semibold text-white">Reports & Analytics</h1>
-                    <p className="text-sm text-slate-400">Generate insights on usage, fines, and trends.</p>
+                    <p className="text-sm text-slate-400">Generate insights on usage and trends.</p>
                 </div>
                 <Dialog>
                     <DialogTrigger asChild>
@@ -33,15 +27,15 @@ export default function AdminReports() {
                         <DialogHeader>
                             <DialogTitle>Export Reports</DialogTitle>
                             <DialogDescription className="text-slate-400">
-                                Choose a report and export format.
+                                Download the most borrowed books report.
                             </DialogDescription>
                         </DialogHeader>
-                        <div className="rounded-xl border border-[#1f2a3d] bg-[#141c2a] p-4 text-sm text-slate-300">
-                            Exported reports will be available in the downloads center.
-                        </div>
                         <DialogFooter>
-                            <button className="rounded-full border border-emerald-400 px-4 py-2 text-sm font-semibold text-emerald-200">
-                                Export
+                            <button
+                                onClick={() => router.post('/admin/reports/export')}
+                                className="rounded-full border border-emerald-400 px-4 py-2 text-sm font-semibold text-emerald-200"
+                            >
+                                Export CSV
                             </button>
                         </DialogFooter>
                     </DialogContent>

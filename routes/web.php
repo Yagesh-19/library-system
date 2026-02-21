@@ -10,6 +10,15 @@ use App\Http\Controllers\Student\ProfileController;
 use App\Http\Controllers\Student\ProfileUpdateController;
 use App\Http\Controllers\Student\ReservationController;
 use App\Http\Controllers\Student\SearchController;
+use App\Http\Controllers\Librarian\BooksController as LibrarianBooksController;
+use App\Http\Controllers\Librarian\DashboardController as LibrarianDashboardController;
+use App\Http\Controllers\Librarian\MembersController as LibrarianMembersController;
+use App\Http\Controllers\Librarian\TransactionsController as LibrarianTransactionsController;
+use App\Http\Controllers\Librarian\ReportsController as LibrarianReportsController;
+use App\Http\Controllers\Admin\DashboardController as AdminDashboardController;
+use App\Http\Controllers\Admin\UsersController as AdminUsersController;
+use App\Http\Controllers\Admin\SystemController as AdminSystemController;
+use App\Http\Controllers\Admin\ReportsController as AdminReportsController;
 
 Route::get('/', function () {
     return Inertia::render('welcome', [
@@ -28,11 +37,21 @@ Route::middleware(['auth', 'verified'])->group(function () {
     })->name('dashboard');
 
     Route::prefix('librarian')->name('librarian.')->middleware('role:librarian')->group(function () {
-        Route::get('dashboard', fn () => Inertia::render('librarian/dashboard'))->name('dashboard');
-        Route::get('books', fn () => Inertia::render('librarian/books'))->name('books');
-        Route::get('members', fn () => Inertia::render('librarian/members'))->name('members');
-        Route::get('transactions', fn () => Inertia::render('librarian/transactions'))->name('transactions');
-        Route::get('reports', fn () => Inertia::render('librarian/reports'))->name('reports');
+        Route::get('dashboard', LibrarianDashboardController::class)->name('dashboard');
+        Route::get('books', [LibrarianBooksController::class, 'index'])->name('books');
+        Route::post('books', [LibrarianBooksController::class, 'store'])->name('books.store');
+        Route::patch('books/{book}', [LibrarianBooksController::class, 'update'])->name('books.update');
+        Route::patch('books/{book}/stock', [LibrarianBooksController::class, 'updateStock'])->name('books.stock');
+        Route::delete('books/{book}', [LibrarianBooksController::class, 'destroy'])->name('books.destroy');
+        Route::get('members', [LibrarianMembersController::class, 'index'])->name('members');
+        Route::post('members', [LibrarianMembersController::class, 'store'])->name('members.store');
+        Route::patch('members/{student}', [LibrarianMembersController::class, 'updateStatus'])->name('members.update');
+        Route::get('transactions', [LibrarianTransactionsController::class, 'index'])->name('transactions');
+        Route::post('transactions/issue', [LibrarianTransactionsController::class, 'issue'])->name('transactions.issue');
+        Route::post('transactions/return', [LibrarianTransactionsController::class, 'return'])->name('transactions.return');
+        Route::post('transactions/renew', [LibrarianTransactionsController::class, 'renew'])->name('transactions.renew');
+        Route::patch('reservations/{reservation}/approve', [LibrarianTransactionsController::class, 'approveReservation'])->name('reservations.approve');
+        Route::get('reports', [LibrarianReportsController::class, 'index'])->name('reports');
     });
 
     Route::prefix('student')->name('student.')->middleware('role:student')->group(function () {
@@ -47,11 +66,18 @@ Route::middleware(['auth', 'verified'])->group(function () {
     });
 
     Route::prefix('admin')->name('admin.')->middleware('role:admin')->group(function () {
-        Route::get('dashboard', fn () => Inertia::render('admin/dashboard'))->name('dashboard');
-        Route::get('users', fn () => Inertia::render('admin/users'))->name('users');
-        Route::get('system', fn () => Inertia::render('admin/system'))->name('system');
-        Route::get('reports', fn () => Inertia::render('admin/reports'))->name('reports');
-        Route::get('security', fn () => Inertia::render('admin/security'))->name('security');
+        Route::get('dashboard', AdminDashboardController::class)->name('dashboard');
+        Route::get('users', [AdminUsersController::class, 'index'])->name('users');
+        Route::post('users', [AdminUsersController::class, 'store'])->name('users.store');
+        Route::patch('users/{user}/approve', [AdminUsersController::class, 'approve'])->name('users.approve');
+        Route::patch('users/{user}/status', [AdminUsersController::class, 'updateStatus'])->name('users.status');
+        Route::get('system', [AdminSystemController::class, 'index'])->name('system');
+        Route::post('system/categories', [AdminSystemController::class, 'storeCategory'])->name('system.categories.store');
+        Route::delete('system/categories/{category}', [AdminSystemController::class, 'deleteCategory'])->name('system.categories.delete');
+        Route::patch('system/borrowing-rules', [AdminSystemController::class, 'updateRules'])->name('system.rules');
+        Route::patch('system/settings', [AdminSystemController::class, 'updateSettings'])->name('system.settings');
+        Route::get('reports', [AdminReportsController::class, 'index'])->name('reports');
+        Route::post('reports/export', [AdminReportsController::class, 'export'])->name('reports.export');
     });
 });
 

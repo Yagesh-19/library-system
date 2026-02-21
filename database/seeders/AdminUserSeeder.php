@@ -21,10 +21,16 @@ class AdminUserSeeder extends Seeder
                 'name' => 'System Admin',
                 'password' => Hash::make($password),
                 'role' => UserRole::Admin,
+                'is_active' => true,
+                'approved_at' => now(),
             ]
         );
 
-        $user->forceFill(['role' => UserRole::Admin])->save();
+        $user->forceFill([
+            'role' => UserRole::Admin,
+            'is_active' => true,
+            'approved_at' => $user->approved_at ?? now(),
+        ])->save();
 
         Admin::firstOrCreate(
             ['user_id' => $user->id],

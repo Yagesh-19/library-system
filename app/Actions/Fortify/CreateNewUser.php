@@ -28,18 +28,23 @@ class CreateNewUser implements CreatesNewUsers
             'password' => $this->passwordRules(),
         ])->validate();
 
+        $role = $input['role'];
+        $autoApprove = $role === UserRole::Student->value;
+
         $user = User::create([
             'name' => $input['name'],
             'email' => $input['email'],
-            'role' => $input['role'],
+            'role' => $role,
+            'is_active' => $autoApprove,
+            'approved_at' => $autoApprove ? now() : null,
             'password' => $input['password'],
         ]);
 
-        if ($input['role'] === UserRole::Student->value) {
+        if ($role === UserRole::Student->value) {
             Student::create(['user_id' => $user->id]);
         }
 
-        if ($input['role'] === UserRole::Librarian->value) {
+        if ($role === UserRole::Librarian->value) {
             Librarian::create(['user_id' => $user->id]);
         }
 
