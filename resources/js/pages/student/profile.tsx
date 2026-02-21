@@ -1,8 +1,11 @@
+import InputError from '@/components/input-error';
 import LibraryLayout from '@/layouts/library-layout';
 import { Dialog, DialogContent, DialogDescription, DialogFooter, DialogHeader, DialogTitle, DialogTrigger } from '@/components/ui/dialog';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { useForm } from '@inertiajs/react';
+import { toast } from 'sonner';
+import { useState } from 'react';
 
 type ProfileProps = {
     profile: {
@@ -19,7 +22,8 @@ type ProfileProps = {
 };
 
 export default function StudentProfile({ profile, history }: ProfileProps) {
-    const { data, setData, patch, processing } = useForm({
+    const [open, setOpen] = useState(false);
+    const { data, setData, patch, processing, errors, clearErrors } = useForm({
         name: profile.name,
         email: profile.email,
         student_number: profile.studentNumber ?? '',
@@ -48,7 +52,13 @@ export default function StudentProfile({ profile, history }: ProfileProps) {
                             <span className="text-slate-400">Email</span>
                             <span className="text-white">{profile.email}</span>
                         </div>
-                        <Dialog>
+                        <Dialog
+                            open={open}
+                            onOpenChange={(value) => {
+                                setOpen(value);
+                                clearErrors();
+                            }}
+                        >
                             <DialogTrigger asChild>
                                 <button className="mt-4 rounded-full bg-emerald-400 px-4 py-2 text-sm font-semibold text-emerald-950">
                                     Edit Profile
@@ -64,7 +74,12 @@ export default function StudentProfile({ profile, history }: ProfileProps) {
                                 <form
                                     onSubmit={(event) => {
                                         event.preventDefault();
-                                        patch('/student/profile');
+                                        patch('/student/profile', {
+                                            onSuccess: () => {
+                                                toast.success('Profile updated.');
+                                                setOpen(false);
+                                            },
+                                        });
                                     }}
                                     className="grid gap-4"
                                 >
@@ -76,6 +91,7 @@ export default function StudentProfile({ profile, history }: ProfileProps) {
                                             onChange={(event) => setData('name', event.target.value)}
                                             className="bg-[#141c2a]"
                                         />
+                                        <InputError message={errors.name} className="text-red-400" />
                                     </div>
                                     <div className="grid gap-2">
                                         <Label htmlFor="profile-email">Email</Label>
@@ -85,6 +101,7 @@ export default function StudentProfile({ profile, history }: ProfileProps) {
                                             onChange={(event) => setData('email', event.target.value)}
                                             className="bg-[#141c2a]"
                                         />
+                                        <InputError message={errors.email} className="text-red-400" />
                                     </div>
                                     <div className="grid gap-2">
                                         <Label htmlFor="profile-id">Student ID</Label>
@@ -94,6 +111,7 @@ export default function StudentProfile({ profile, history }: ProfileProps) {
                                             onChange={(event) => setData('student_number', event.target.value)}
                                             className="bg-[#141c2a]"
                                         />
+                                        <InputError message={errors.student_number} className="text-red-400" />
                                     </div>
                                     <DialogFooter>
                                         <button

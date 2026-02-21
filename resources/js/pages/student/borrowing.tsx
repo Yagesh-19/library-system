@@ -1,7 +1,10 @@
+import InputError from '@/components/input-error';
 import LibraryLayout from '@/layouts/library-layout';
 import { Dialog, DialogContent, DialogDescription, DialogFooter, DialogHeader, DialogTitle, DialogTrigger } from '@/components/ui/dialog';
-import { router } from '@inertiajs/react';
+import { router, useForm } from '@inertiajs/react';
 import { RefreshCcw } from 'lucide-react';
+import { toast } from 'sonner';
+import { useState } from 'react';
 
 type BorrowingProps = {
     borrowed: {
@@ -18,6 +21,10 @@ type BorrowingProps = {
 };
 
 export default function StudentBorrowing({ borrowed, reservations }: BorrowingProps) {
+    const [renewDialog, setRenewDialog] = useState<number | null>(null);
+    const [cancelDialog, setCancelDialog] = useState<number | null>(null);
+    const { post, processing, errors, clearErrors } = useForm({});
+
     return (
         <LibraryLayout title="Borrowing" role="student" active="borrowing">
             <section className="flex flex-col gap-2">
@@ -47,7 +54,13 @@ export default function StudentBorrowing({ borrowed, reservations }: BorrowingPr
                                         <span className="rounded-full bg-amber-400/20 px-3 py-1 text-xs font-semibold text-amber-200">
                                             {book.status}
                                         </span>
-                                        <Dialog>
+                                        <Dialog
+                                            open={renewDialog === book.id}
+                                            onOpenChange={(open) => {
+                                                setRenewDialog(open ? book.id : null);
+                                                clearErrors();
+                                            }}
+                                        >
                                             <DialogTrigger asChild>
                                                 <button className="inline-flex items-center gap-2 rounded-full border border-emerald-400 px-3 py-1 text-xs font-semibold text-emerald-200">
                                                     <RefreshCcw className="h-3 w-3" />
@@ -64,14 +77,23 @@ export default function StudentBorrowing({ borrowed, reservations }: BorrowingPr
                                                 <div className="rounded-xl border border-[#1f2a3d] bg-[#141c2a] p-4 text-sm text-slate-300">
                                                     Renewals are subject to availability and borrowing rules.
                                                 </div>
+                                                <InputError message={errors.message} className="text-red-400" />
                                                 <DialogFooter>
                                                     <form
                                                         onSubmit={(event) => {
                                                             event.preventDefault();
-                                                            router.post(`/student/borrowings/${book.id}/renew`);
+                                                            post(`/student/borrowings/${book.id}/renew`, {
+                                                                onSuccess: () => {
+                                                                    toast.success('Borrowing renewed.');
+                                                                    setRenewDialog(null);
+                                                                },
+                                                            });
                                                         }}
                                                     >
-                                                        <button className="rounded-full border border-emerald-400 px-4 py-2 text-sm font-semibold text-emerald-200">
+                                                        <button
+                                                            disabled={processing}
+                                                            className="rounded-full border border-emerald-400 px-4 py-2 text-sm font-semibold text-emerald-200"
+                                                        >
                                                             Confirm Renewal
                                                         </button>
                                                     </form>
@@ -100,7 +122,13 @@ export default function StudentBorrowing({ borrowed, reservations }: BorrowingPr
                                 >
                                     <p className="text-sm font-semibold text-white">{book.title}</p>
                                     <p className="text-xs text-slate-400">{book.status}</p>
-                                    <Dialog>
+                                    <Dialog
+                                        open={cancelDialog === book.id}
+                                        onOpenChange={(open) => {
+                                            setCancelDialog(open ? book.id : null);
+                                            clearErrors();
+                                        }}
+                                    >
                                         <DialogTrigger asChild>
                                             <button className="mt-3 rounded-full bg-emerald-400/20 px-3 py-1 text-xs font-semibold text-emerald-200">
                                                 Manage Hold
@@ -116,11 +144,17 @@ export default function StudentBorrowing({ borrowed, reservations }: BorrowingPr
                                             <div className="rounded-xl border border-[#1f2a3d] bg-[#141c2a] p-4 text-sm text-slate-300">
                                                 You can cancel or reschedule your pickup window.
                                             </div>
+                                            <InputError message={errors.message} className="text-red-400" />
                                             <DialogFooter>
                                                 <form
                                                     onSubmit={(event) => {
                                                         event.preventDefault();
-                                                        router.patch(`/student/reservations/${book.id}`, { action: 'cancel' });
+                                                        router.patch(`/student/reservations/${book.id}`, { action: 'cancel' }, {
+                                                            onSuccess: () => {
+                                                                toast.success('Reservation cancelled.');
+                                                                setCancelDialog(null);
+                                                            },
+                                                        });
                                                     }}
                                                 >
                                                     <button className="rounded-full border border-emerald-400 px-4 py-2 text-sm font-semibold text-emerald-200">

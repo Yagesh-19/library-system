@@ -29,6 +29,7 @@ class BorrowingController extends Controller
         $reservations = Reservation::query()
             ->with('book')
             ->where('user_id', $user->id)
+            ->whereIn('status', ['active', 'fulfilled'])
             ->orderByDesc('reserved_at')
             ->take(5)
             ->get()

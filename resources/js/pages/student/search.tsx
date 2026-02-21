@@ -1,7 +1,10 @@
+import InputError from '@/components/input-error';
 import LibraryLayout from '@/layouts/library-layout';
 import { Dialog, DialogContent, DialogDescription, DialogFooter, DialogHeader, DialogTitle, DialogTrigger } from '@/components/ui/dialog';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { router, useForm } from '@inertiajs/react';
+import { toast } from 'sonner';
+import { useState } from 'react';
 
 type SearchProps = {
     filters: {
@@ -27,6 +30,8 @@ export default function StudentSearch({ filters, categories, books }: SearchProp
         availability: filters.availability || 'all',
         category: filters.category || 'all',
     });
+    const [activeDialog, setActiveDialog] = useState<number | null>(null);
+    const { data: reservationData, setData: setReservationData, post, processing, errors, clearErrors } = useForm({ book_id: 0 });
 
     const submitFilters = () => {
         router.get('/student/search', data, { preserveState: true, replace: true });
@@ -110,7 +115,10 @@ export default function StudentSearch({ filters, categories, books }: SearchProp
                     </div>
                 ) : (
                     books.map((book) => (
-                        <Dialog key={book.id}>
+                        <Dialog key={book.id} open={activeDialog === book.id} onOpenChange={(open) => {
+                            setActiveDialog(open ? book.id : null);
+                            clearErrors();
+                        }}>
                             <div className="rounded-3xl border border-[#1f2a3d] bg-[#141c2a]/80 p-5">
                                 <div className="flex h-36 items-center justify-center rounded-2xl bg-[#1a2436]/80 text-4xl">
                                     {book.cover ? '📖' : '📚'}
@@ -141,14 +149,24 @@ export default function StudentSearch({ filters, categories, books }: SearchProp
                                 <div className="rounded-xl border border-[#1f2a3d] bg-[#141c2a] p-4 text-sm text-slate-300">
                                     Pickup will be available within 24 hours if the book is in stock.
                                 </div>
+                                <InputError message={errors.book_id} className="text-red-400" />
                                 <DialogFooter>
                                     <form
                                         onSubmit={(event) => {
                                             event.preventDefault();
-                                            router.post('/student/reservations', { book_id: book.id });
+                                            setReservationData('book_id', book.id);
+                                            post('/student/reservations', {
+                                                onSuccess: () => {
+                                                    toast.success('Reservation created.');
+                                                    setActiveDialog(null);
+                                                },
+                                            });
                                         }}
                                     >
-                                        <button className="rounded-full border border-emerald-400 px-4 py-2 text-sm font-semibold text-emerald-200">
+                                        <button
+                                            disabled={processing}
+                                            className="rounded-full border border-emerald-400 px-4 py-2 text-sm font-semibold text-emerald-200"
+                                        >
                                             Confirm Request
                                         </button>
                                     </form>
