@@ -3,13 +3,21 @@ import { Dialog, DialogContent, DialogDescription, DialogFooter, DialogHeader, D
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 
-const history = [
-    { title: 'The Alchemist', action: 'Returned', date: 'Feb 12, 2026' },
-    { title: 'The Great Gatsby', action: 'Borrowed', date: 'Feb 2, 2026' },
-    { title: 'Educated', action: 'Returned', date: 'Jan 25, 2026' },
-];
+type ProfileProps = {
+    profile: {
+        name: string;
+        email: string;
+        studentNumber: string | null;
+    };
+    history: {
+        id: number;
+        title: string;
+        action: string;
+        date: string | null;
+    }[];
+};
 
-export default function StudentProfile() {
+export default function StudentProfile({ profile, history }: ProfileProps) {
     return (
         <LibraryLayout title="Profile" role="student" active="profile">
             <section className="flex flex-col gap-2">
@@ -23,15 +31,15 @@ export default function StudentProfile() {
                     <div className="mt-5 space-y-4 text-sm text-slate-300">
                         <div className="flex items-center justify-between">
                             <span className="text-slate-400">Name</span>
-                            <span className="text-white">Yagesh Alageshan</span>
+                            <span className="text-white">{profile.name}</span>
                         </div>
                         <div className="flex items-center justify-between">
                             <span className="text-slate-400">Student ID</span>
-                            <span className="text-white">ST-2045</span>
+                            <span className="text-white">{profile.studentNumber ?? 'Not set'}</span>
                         </div>
                         <div className="flex items-center justify-between">
                             <span className="text-slate-400">Email</span>
-                            <span className="text-white">yagesh@example.com</span>
+                            <span className="text-white">{profile.email}</span>
                         </div>
                         <Dialog>
                             <DialogTrigger asChild>
@@ -49,15 +57,15 @@ export default function StudentProfile() {
                                 <div className="grid gap-4">
                                     <div className="grid gap-2">
                                         <Label htmlFor="profile-name">Name</Label>
-                                        <Input id="profile-name" defaultValue="Yagesh Alageshan" className="bg-[#141c2a]" />
+                                        <Input id="profile-name" defaultValue={profile.name} className="bg-[#141c2a]" />
                                     </div>
                                     <div className="grid gap-2">
                                         <Label htmlFor="profile-email">Email</Label>
-                                        <Input id="profile-email" defaultValue="yagesh@example.com" className="bg-[#141c2a]" />
+                                        <Input id="profile-email" defaultValue={profile.email} className="bg-[#141c2a]" />
                                     </div>
                                     <div className="grid gap-2">
                                         <Label htmlFor="profile-id">Student ID</Label>
-                                        <Input id="profile-id" defaultValue="ST-2045" className="bg-[#141c2a]" />
+                                        <Input id="profile-id" defaultValue={profile.studentNumber ?? ''} className="bg-[#141c2a]" />
                                     </div>
                                 </div>
                                 <DialogFooter>
@@ -73,20 +81,26 @@ export default function StudentProfile() {
                 <div className="rounded-3xl border border-[#1f2a3d] bg-[#141c2a]/80 p-6">
                     <h2 className="text-lg font-semibold text-white">Borrowing History</h2>
                     <div className="mt-5 space-y-4">
-                        {history.map((item) => (
-                            <div
-                                key={item.title}
-                                className="flex items-center justify-between rounded-2xl border border-[#1f2a3d] bg-[#1a2436]/80 p-4"
-                            >
-                                <div>
-                                    <p className="text-sm font-semibold text-white">{item.title}</p>
-                                    <p className="text-xs text-slate-400">{item.date}</p>
-                                </div>
-                                <span className="rounded-full bg-sky-400/20 px-3 py-1 text-xs font-semibold text-sky-200">
-                                    {item.action}
-                                </span>
+                        {history.length === 0 ? (
+                            <div className="rounded-2xl border border-[#1f2a3d] bg-[#1a2436]/80 p-4 text-sm text-slate-400">
+                                No history yet.
                             </div>
-                        ))}
+                        ) : (
+                            history.map((item) => (
+                                <div
+                                    key={item.id}
+                                    className="flex items-center justify-between rounded-2xl border border-[#1f2a3d] bg-[#1a2436]/80 p-4"
+                                >
+                                    <div>
+                                        <p className="text-sm font-semibold text-white">{item.title}</p>
+                                        <p className="text-xs text-slate-400">{item.date ?? 'N/A'}</p>
+                                    </div>
+                                    <span className="rounded-full bg-sky-400/20 px-3 py-1 text-xs font-semibold text-sky-200">
+                                        {item.action}
+                                    </span>
+                                </div>
+                            ))
+                        )}
                     </div>
                 </div>
             </section>

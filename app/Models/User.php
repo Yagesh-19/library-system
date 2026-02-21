@@ -67,4 +67,19 @@ class User extends Authenticatable
     {
         return $this->hasOne(Admin::class);
     }
+
+    public function borrowings()
+    {
+        return $this->hasMany(Borrowing::class);
+    }
+
+    public function reservations()
+    {
+        return $this->hasMany(Reservation::class);
+    }
+
+    public function notifications()
+    {
+        return $this->hasMany(LibraryNotification::class);
+    }
 }

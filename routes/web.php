@@ -3,6 +3,10 @@
 use Illuminate\Support\Facades\Route;
 use Inertia\Inertia;
 use Laravel\Fortify\Features;
+use App\Http\Controllers\Student\BorrowingController;
+use App\Http\Controllers\Student\DashboardController as StudentDashboardController;
+use App\Http\Controllers\Student\ProfileController;
+use App\Http\Controllers\Student\SearchController;
 
 Route::get('/', function () {
     return Inertia::render('welcome', [
@@ -29,10 +33,10 @@ Route::middleware(['auth', 'verified'])->group(function () {
     });
 
     Route::prefix('student')->name('student.')->middleware('role:student')->group(function () {
-        Route::get('dashboard', fn () => Inertia::render('student/dashboard'))->name('dashboard');
-        Route::get('search', fn () => Inertia::render('student/search'))->name('search');
-        Route::get('borrowing', fn () => Inertia::render('student/borrowing'))->name('borrowing');
-        Route::get('profile', fn () => Inertia::render('student/profile'))->name('profile');
+        Route::get('dashboard', StudentDashboardController::class)->name('dashboard');
+        Route::get('search', SearchController::class)->name('search');
+        Route::get('borrowing', BorrowingController::class)->name('borrowing');
+        Route::get('profile', ProfileController::class)->name('profile');
     });
 
     Route::prefix('admin')->name('admin.')->middleware('role:admin')->group(function () {
