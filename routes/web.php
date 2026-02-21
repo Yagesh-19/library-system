@@ -4,8 +4,11 @@ use Illuminate\Support\Facades\Route;
 use Inertia\Inertia;
 use Laravel\Fortify\Features;
 use App\Http\Controllers\Student\BorrowingController;
+use App\Http\Controllers\Student\BorrowingRenewController;
 use App\Http\Controllers\Student\DashboardController as StudentDashboardController;
 use App\Http\Controllers\Student\ProfileController;
+use App\Http\Controllers\Student\ProfileUpdateController;
+use App\Http\Controllers\Student\ReservationController;
 use App\Http\Controllers\Student\SearchController;
 
 Route::get('/', function () {
@@ -37,6 +40,10 @@ Route::middleware(['auth', 'verified'])->group(function () {
         Route::get('search', SearchController::class)->name('search');
         Route::get('borrowing', BorrowingController::class)->name('borrowing');
         Route::get('profile', ProfileController::class)->name('profile');
+        Route::post('reservations', [ReservationController::class, 'store'])->name('reservations.store');
+        Route::patch('reservations/{reservation}', [ReservationController::class, 'update'])->name('reservations.update');
+        Route::post('borrowings/{borrowing}/renew', BorrowingRenewController::class)->name('borrowings.renew');
+        Route::patch('profile', ProfileUpdateController::class)->name('profile.update');
     });
 
     Route::prefix('admin')->name('admin.')->middleware('role:admin')->group(function () {

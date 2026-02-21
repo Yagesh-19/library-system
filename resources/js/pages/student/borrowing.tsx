@@ -1,5 +1,6 @@
 import LibraryLayout from '@/layouts/library-layout';
 import { Dialog, DialogContent, DialogDescription, DialogFooter, DialogHeader, DialogTitle, DialogTrigger } from '@/components/ui/dialog';
+import { router } from '@inertiajs/react';
 import { RefreshCcw } from 'lucide-react';
 
 type BorrowingProps = {
@@ -64,9 +65,16 @@ export default function StudentBorrowing({ borrowed, reservations }: BorrowingPr
                                                     Renewals are subject to availability and borrowing rules.
                                                 </div>
                                                 <DialogFooter>
-                                                    <button className="rounded-full border border-emerald-400 px-4 py-2 text-sm font-semibold text-emerald-200">
-                                                        Confirm Renewal
-                                                    </button>
+                                                    <form
+                                                        onSubmit={(event) => {
+                                                            event.preventDefault();
+                                                            router.post(`/student/borrowings/${book.id}/renew`);
+                                                        }}
+                                                    >
+                                                        <button className="rounded-full border border-emerald-400 px-4 py-2 text-sm font-semibold text-emerald-200">
+                                                            Confirm Renewal
+                                                        </button>
+                                                    </form>
                                                 </DialogFooter>
                                             </DialogContent>
                                         </Dialog>
@@ -109,9 +117,16 @@ export default function StudentBorrowing({ borrowed, reservations }: BorrowingPr
                                                 You can cancel or reschedule your pickup window.
                                             </div>
                                             <DialogFooter>
-                                                <button className="rounded-full border border-emerald-400 px-4 py-2 text-sm font-semibold text-emerald-200">
-                                                    Update Reservation
-                                                </button>
+                                                <form
+                                                    onSubmit={(event) => {
+                                                        event.preventDefault();
+                                                        router.patch(`/student/reservations/${book.id}`, { action: 'cancel' });
+                                                    }}
+                                                >
+                                                    <button className="rounded-full border border-emerald-400 px-4 py-2 text-sm font-semibold text-emerald-200">
+                                                        Cancel Reservation
+                                                    </button>
+                                                </form>
                                             </DialogFooter>
                                         </DialogContent>
                                     </Dialog>

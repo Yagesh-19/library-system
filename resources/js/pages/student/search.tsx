@@ -1,6 +1,7 @@
 import LibraryLayout from '@/layouts/library-layout';
 import { Dialog, DialogContent, DialogDescription, DialogFooter, DialogHeader, DialogTitle, DialogTrigger } from '@/components/ui/dialog';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
+import { router, useForm } from '@inertiajs/react';
 
 type SearchProps = {
     filters: {
@@ -21,6 +22,16 @@ type SearchProps = {
 };
 
 export default function StudentSearch({ filters, categories, books }: SearchProps) {
+    const { data, setData } = useForm({
+        q: filters.q || '',
+        availability: filters.availability || 'all',
+        category: filters.category || 'all',
+    });
+
+    const submitFilters = () => {
+        router.get('/student/search', data, { preserveState: true, replace: true });
+    };
+
     return (
         <LibraryLayout title="Search & Browse" role="student" active="search">
             <section className="flex flex-col gap-2">
@@ -34,14 +45,26 @@ export default function StudentSearch({ filters, categories, books }: SearchProp
                         <div className="flex items-center gap-3 rounded-2xl border border-[#1f2a3d] bg-[#1a2436]/80 px-4 py-3">
                             <span className="text-slate-500">🔍</span>
                             <input
-                                defaultValue={filters.q}
+                                value={data.q}
+                                onChange={(event) => setData('q', event.target.value)}
+                                onKeyDown={(event) => {
+                                    if (event.key === 'Enter') {
+                                        submitFilters();
+                                    }
+                                }}
                                 className="w-full bg-transparent text-sm text-slate-200 placeholder:text-slate-500 focus:outline-none"
                                 placeholder="Search by title, author, ISBN, category..."
                             />
                         </div>
                     </div>
                     <div className="flex flex-wrap gap-3">
-                        <Select defaultValue={filters.availability || 'all'}>
+                        <Select
+                            value={data.availability}
+                            onValueChange={(value) => {
+                                setData('availability', value);
+                                router.get('/student/search', { ...data, availability: value }, { preserveState: true, replace: true });
+                            }}
+                        >
                             <SelectTrigger className="w-[160px] border-[#1f2a3d] bg-[#1a2436]/80 text-slate-200">
                                 <SelectValue placeholder="Availability" />
                             </SelectTrigger>
@@ -51,7 +74,13 @@ export default function StudentSearch({ filters, categories, books }: SearchProp
                                 <SelectItem value="reserved">Reserved</SelectItem>
                             </SelectContent>
                         </Select>
-                        <Select defaultValue={filters.category || 'all'}>
+                        <Select
+                            value={data.category}
+                            onValueChange={(value) => {
+                                setData('category', value);
+                                router.get('/student/search', { ...data, category: value }, { preserveState: true, replace: true });
+                            }}
+                        >
                             <SelectTrigger className="w-[160px] border-[#1f2a3d] bg-[#1a2436]/80 text-slate-200">
                                 <SelectValue placeholder="Category" />
                             </SelectTrigger>
@@ -64,6 +93,12 @@ export default function StudentSearch({ filters, categories, books }: SearchProp
                                 ))}
                             </SelectContent>
                         </Select>
+                        <button
+                            onClick={submitFilters}
+                            className="rounded-full border border-emerald-400 px-4 py-2 text-sm font-semibold text-emerald-200"
+                        >
+                            Apply Filters
+                        </button>
                     </div>
                 </div>
             </section>
@@ -107,9 +142,16 @@ export default function StudentSearch({ filters, categories, books }: SearchProp
                                     Pickup will be available within 24 hours if the book is in stock.
                                 </div>
                                 <DialogFooter>
-                                    <button className="rounded-full border border-emerald-400 px-4 py-2 text-sm font-semibold text-emerald-200">
-                                        Confirm Request
-                                    </button>
+                                    <form
+                                        onSubmit={(event) => {
+                                            event.preventDefault();
+                                            router.post('/student/reservations', { book_id: book.id });
+                                        }}
+                                    >
+                                        <button className="rounded-full border border-emerald-400 px-4 py-2 text-sm font-semibold text-emerald-200">
+                                            Confirm Request
+                                        </button>
+                                    </form>
                                 </DialogFooter>
                             </DialogContent>
                         </Dialog>

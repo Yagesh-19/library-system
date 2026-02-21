@@ -2,6 +2,7 @@ import LibraryLayout from '@/layouts/library-layout';
 import { Dialog, DialogContent, DialogDescription, DialogFooter, DialogHeader, DialogTitle, DialogTrigger } from '@/components/ui/dialog';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
+import { useForm } from '@inertiajs/react';
 
 type ProfileProps = {
     profile: {
@@ -18,6 +19,12 @@ type ProfileProps = {
 };
 
 export default function StudentProfile({ profile, history }: ProfileProps) {
+    const { data, setData, patch, processing } = useForm({
+        name: profile.name,
+        email: profile.email,
+        student_number: profile.studentNumber ?? '',
+    });
+
     return (
         <LibraryLayout title="Profile" role="student" active="profile">
             <section className="flex flex-col gap-2">
@@ -54,25 +61,50 @@ export default function StudentProfile({ profile, history }: ProfileProps) {
                                         Update your personal details.
                                     </DialogDescription>
                                 </DialogHeader>
-                                <div className="grid gap-4">
+                                <form
+                                    onSubmit={(event) => {
+                                        event.preventDefault();
+                                        patch('/student/profile');
+                                    }}
+                                    className="grid gap-4"
+                                >
                                     <div className="grid gap-2">
                                         <Label htmlFor="profile-name">Name</Label>
-                                        <Input id="profile-name" defaultValue={profile.name} className="bg-[#141c2a]" />
+                                        <Input
+                                            id="profile-name"
+                                            value={data.name}
+                                            onChange={(event) => setData('name', event.target.value)}
+                                            className="bg-[#141c2a]"
+                                        />
                                     </div>
                                     <div className="grid gap-2">
                                         <Label htmlFor="profile-email">Email</Label>
-                                        <Input id="profile-email" defaultValue={profile.email} className="bg-[#141c2a]" />
+                                        <Input
+                                            id="profile-email"
+                                            value={data.email}
+                                            onChange={(event) => setData('email', event.target.value)}
+                                            className="bg-[#141c2a]"
+                                        />
                                     </div>
                                     <div className="grid gap-2">
                                         <Label htmlFor="profile-id">Student ID</Label>
-                                        <Input id="profile-id" defaultValue={profile.studentNumber ?? ''} className="bg-[#141c2a]" />
+                                        <Input
+                                            id="profile-id"
+                                            value={data.student_number}
+                                            onChange={(event) => setData('student_number', event.target.value)}
+                                            className="bg-[#141c2a]"
+                                        />
                                     </div>
-                                </div>
-                                <DialogFooter>
-                                    <button className="rounded-full border border-emerald-400 px-4 py-2 text-sm font-semibold text-emerald-200">
-                                        Save Changes
-                                    </button>
-                                </DialogFooter>
+                                    <DialogFooter>
+                                        <button
+                                            type="submit"
+                                            disabled={processing}
+                                            className="rounded-full border border-emerald-400 px-4 py-2 text-sm font-semibold text-emerald-200"
+                                        >
+                                            Save Changes
+                                        </button>
+                                    </DialogFooter>
+                                </form>
                             </DialogContent>
                         </Dialog>
                     </div>

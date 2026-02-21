@@ -24,6 +24,9 @@ class SearchController extends Controller
         }
 
         if ($availability = $request->string('availability')->toString()) {
+            if ($availability === 'all') {
+                $availability = '';
+            }
             if ($availability === 'available') {
                 $query->where('available_copies', '>', 0);
             }
@@ -33,7 +36,9 @@ class SearchController extends Controller
         }
 
         if ($category = $request->string('category')->toString()) {
+            if ($category !== 'all') {
             $query->whereHas('category', fn ($builder) => $builder->where('slug', $category));
+            }
         }
 
         if ($year = $request->integer('year')) {
