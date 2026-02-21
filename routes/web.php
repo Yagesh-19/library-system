@@ -36,7 +36,7 @@ Route::middleware(['auth', 'verified'])->group(function () {
         return Inertia::render('dashboard');
     })->name('dashboard');
 
-    Route::prefix('librarian')->name('librarian.')->middleware('role:librarian')->group(function () {
+    Route::prefix('librarian')->name('librarian.')->middleware(['role:librarian', 'banned'])->group(function () {
         Route::get('dashboard', LibrarianDashboardController::class)->name('dashboard');
         Route::get('books', [LibrarianBooksController::class, 'index'])->name('books');
         Route::post('books', [LibrarianBooksController::class, 'store'])->name('books.store');
@@ -54,7 +54,7 @@ Route::middleware(['auth', 'verified'])->group(function () {
         Route::get('reports', [LibrarianReportsController::class, 'index'])->name('reports');
     });
 
-    Route::prefix('student')->name('student.')->middleware('role:student')->group(function () {
+    Route::prefix('student')->name('student.')->middleware(['role:student', 'banned'])->group(function () {
         Route::get('dashboard', StudentDashboardController::class)->name('dashboard');
         Route::get('search', SearchController::class)->name('search');
         Route::get('borrowing', BorrowingController::class)->name('borrowing');
