@@ -1,5 +1,5 @@
-import LibraryLayout from '@/layouts/library-layout';
 import { Dialog, DialogContent, DialogDescription, DialogFooter, DialogHeader, DialogTitle, DialogTrigger } from '@/components/ui/dialog';
+import LibraryLayout from '@/layouts/library-layout';
 
 const controls = [
     {

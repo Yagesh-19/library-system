@@ -1,14 +1,14 @@
+import { router, useForm } from '@inertiajs/react';
+import { MoreHorizontal, Plus } from 'lucide-react';
+import { useState } from 'react';
+import { toast } from 'sonner';
 import InputError from '@/components/input-error';
-import LibraryLayout from '@/layouts/library-layout';
 import { Dialog, DialogContent, DialogDescription, DialogFooter, DialogHeader, DialogTitle, DialogTrigger } from '@/components/ui/dialog';
 import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigger } from '@/components/ui/dropdown-menu';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
-import { router, useForm } from '@inertiajs/react';
-import { MoreHorizontal, Plus } from 'lucide-react';
-import { toast } from 'sonner';
-import { useState } from 'react';
+import LibraryLayout from '@/layouts/library-layout';
 
 type BooksProps = {
     filters: {
@@ -22,6 +22,7 @@ type BooksProps = {
         author: string;
         isbn: string;
         category: string;
+        category_id: number | null;
         status: string;
         available: number;
         total: number;
@@ -38,14 +39,14 @@ export default function LibrarianBooks({ filters, books, categories }: BooksProp
         title: '',
         author: '',
         isbn: '',
-        category: '',
+        category_id: '',
         copies: 1,
     });
 
     const editForm = useForm({
         title: '',
         author: '',
-        category: '',
+        category_id: '',
     });
 
     const stockForm = useForm({
@@ -126,13 +127,22 @@ export default function LibrarianBooks({ filters, books, categories }: BooksProp
                                 </div>
                                 <div className="grid gap-2">
                                     <Label htmlFor="category">Category</Label>
-                                    <Input
-                                        id="category"
-                                        value={createForm.data.category}
-                                        onChange={(event) => createForm.setData('category', event.target.value)}
-                                        className="bg-[#141c2a]"
-                                    />
-                                    <InputError message={createForm.errors.category} className="text-red-400" />
+                                    <Select
+                                        value={createForm.data.category_id ? String(createForm.data.category_id) : ''}
+                                        onValueChange={(value) => createForm.setData('category_id', value)}
+                                    >
+                                        <SelectTrigger id="category" className="border-[#1f2a3d] bg-[#141c2a] text-slate-200">
+                                            <SelectValue placeholder="Select category" />
+                                        </SelectTrigger>
+                                        <SelectContent className="border-[#1f2a3d] bg-[#0f172a] text-slate-100">
+                                            {categories.map((category) => (
+                                                <SelectItem key={category.id} value={String(category.id)}>
+                                                    {category.name}
+                                                </SelectItem>
+                                            ))}
+                                        </SelectContent>
+                                    </Select>
+                                    <InputError message={createForm.errors.category_id} className="text-red-400" />
                                 </div>
                                 <div className="grid gap-2">
                                     <Label htmlFor="copies">Copies</Label>
@@ -250,7 +260,7 @@ export default function LibrarianBooks({ filters, books, categories }: BooksProp
                                                 editForm.setData({
                                                     title: book.title,
                                                     author: book.author,
-                                                    category: book.category,
+                                                    category_id: book.category_id ? String(book.category_id) : '',
                                                 });
                                             }}
                                         >
@@ -323,12 +333,22 @@ export default function LibrarianBooks({ filters, books, categories }: BooksProp
                         </div>
                         <div className="grid gap-2">
                             <Label>Category</Label>
-                            <Input
-                                value={editForm.data.category}
-                                onChange={(event) => editForm.setData('category', event.target.value)}
-                                className="bg-[#141c2a]"
-                            />
-                            <InputError message={editForm.errors.category} className="text-red-400" />
+                            <Select
+                                value={editForm.data.category_id ? String(editForm.data.category_id) : ''}
+                                onValueChange={(value) => editForm.setData('category_id', value)}
+                            >
+                                <SelectTrigger className="border-[#1f2a3d] bg-[#141c2a] text-slate-200">
+                                    <SelectValue placeholder="Select category" />
+                                </SelectTrigger>
+                                <SelectContent className="border-[#1f2a3d] bg-[#0f172a] text-slate-100">
+                                    {categories.map((category) => (
+                                        <SelectItem key={category.id} value={String(category.id)}>
+                                            {category.name}
+                                        </SelectItem>
+                                    ))}
+                                </SelectContent>
+                            </Select>
+                            <InputError message={editForm.errors.category_id} className="text-red-400" />
                         </div>
                         <DialogFooter>
                             <button

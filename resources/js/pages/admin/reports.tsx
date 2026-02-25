@@ -1,7 +1,7 @@
-import LibraryLayout from '@/layouts/library-layout';
-import { Dialog, DialogContent, DialogDescription, DialogFooter, DialogHeader, DialogTitle, DialogTrigger } from '@/components/ui/dialog';
 import { router } from '@inertiajs/react';
 import { Download } from 'lucide-react';
+import { Dialog, DialogContent, DialogDescription, DialogFooter, DialogHeader, DialogTitle, DialogTrigger } from '@/components/ui/dialog';
+import LibraryLayout from '@/layouts/library-layout';
 
 type ReportsProps = {
     reports: { title: string; metric: string; action: string }[];

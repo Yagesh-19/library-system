@@ -5,8 +5,11 @@ namespace App\Http\Controllers\Librarian;
 use App\Http\Controllers\Controller;
 use App\Models\Book;
 use App\Models\Borrowing;
+use App\Models\BorrowingRule;
 use App\Models\Reservation;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\DB;
+use Illuminate\Validation\ValidationException;
 use Inertia\Inertia;
 
 class TransactionsController extends Controller
@@ -130,10 +133,31 @@ class TransactionsController extends Controller
 
     public function approveReservation(Request $request, Reservation $reservation)
     {
-        $reservation->update([
-            'status' => 'fulfilled',
-            'fulfilled_at' => now(),
-        ]);
+        DB::transaction(function () use ($reservation) {
+            $reservation = Reservation::query()->lockForUpdate()->findOrFail($reservation->id);
+
+            if ($reservation->status !== 'active') {
+                throw ValidationException::withMessages([
+                    'reservation' => 'Only active reservations can be approved.',
+                ]);
+            }
+
+            $rules = BorrowingRule::first();
+            $borrowDays = $rules?->borrow_days ?? 14;
+
+            Borrowing::create([
+                'user_id' => $reservation->user_id,
+                'book_id' => $reservation->book_id,
+                'borrowed_at' => now(),
+                'due_at' => now()->addDays($borrowDays),
+                'status' => 'borrowed',
+            ]);
+
+            $reservation->update([
+                'status' => 'fulfilled',
+                'fulfilled_at' => now(),
+            ]);
+        });
 
         return back()->with('status', 'Reservation approved.');
     }

@@ -1,6 +1,6 @@
+import { ArrowDown, ArrowUp, BookOpen, CircleAlert, Users } from 'lucide-react';
 import LibraryLayout from '@/layouts/library-layout';
 import { cn } from '@/lib/utils';
-import { ArrowDown, ArrowUp, BookOpen, CircleAlert, Users } from 'lucide-react';
 
 type DashboardProps = {
     stats: {

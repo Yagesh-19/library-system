@@ -7,6 +7,8 @@ use App\Models\Book;
 use App\Models\Reservation;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\DB;
+use Illuminate\Validation\ValidationException;
 
 class ReservationController extends Controller
 {
@@ -16,15 +18,37 @@ class ReservationController extends Controller
             'book_id' => ['required', 'exists:books,id'],
         ]);
 
-        $book = Book::query()->findOrFail($data['book_id']);
+        DB::transaction(function () use ($request, $data) {
+            $book = Book::query()->lockForUpdate()->findOrFail($data['book_id']);
 
-        Reservation::create([
-            'user_id' => $request->user()->id,
-            'book_id' => $book->id,
-            'reserved_at' => now(),
-            'expires_at' => now()->addDays(3),
-            'status' => 'active',
-        ]);
+            if ($book->available_copies < 1) {
+                throw ValidationException::withMessages([
+                    'book_id' => 'No copies available for reservation.',
+                ]);
+            }
+
+            $hasActiveReservation = Reservation::query()
+                ->where('user_id', $request->user()->id)
+                ->where('book_id', $book->id)
+                ->where('status', 'active')
+                ->exists();
+
+            if ($hasActiveReservation) {
+                throw ValidationException::withMessages([
+                    'book_id' => 'You already have an active reservation for this book.',
+                ]);
+            }
+
+            Reservation::create([
+                'user_id' => $request->user()->id,
+                'book_id' => $book->id,
+                'reserved_at' => now(),
+                'expires_at' => now()->addDays(3),
+                'status' => 'active',
+            ]);
+
+            $book->decrement('available_copies');
+        });
 
         return back()->with('status', 'Reservation created.');
     }
@@ -39,9 +63,24 @@ class ReservationController extends Controller
             abort(403);
         }
 
-        $reservation->update([
-            'status' => 'cancelled',
-        ]);
+        DB::transaction(function () use ($reservation) {
+            $reservation = Reservation::query()->lockForUpdate()->findOrFail($reservation->id);
+
+            if ($reservation->status !== 'active') {
+                throw ValidationException::withMessages([
+                    'action' => 'Only active reservations can be cancelled.',
+                ]);
+            }
+
+            $reservation->update([
+                'status' => 'cancelled',
+            ]);
+
+            $book = Book::query()->lockForUpdate()->findOrFail($reservation->book_id);
+            $book->update([
+                'available_copies' => min($book->available_copies + 1, $book->total_copies),
+            ]);
+        });
 
         return back()->with('status', 'Reservation updated.');
     }

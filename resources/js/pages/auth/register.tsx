@@ -1,5 +1,5 @@
-import AuthLayout from '@/layouts/auth-layout';
 import { Head, Link } from '@inertiajs/react';
+import AuthLayout from '@/layouts/auth-layout';
 
 export default function RegisterSelect() {
     return (

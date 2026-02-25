@@ -6,7 +6,6 @@ use App\Http\Controllers\Controller;
 use App\Models\Book;
 use App\Models\Category;
 use Illuminate\Http\Request;
-use Illuminate\Support\Str;
 use Inertia\Inertia;
 
 class BooksController extends Controller
@@ -47,7 +46,8 @@ class BooksController extends Controller
                 'title' => $book->title,
                 'author' => $book->author,
                 'isbn' => $book->isbn,
-                'category' => $book->category?->name ?? 'General',
+                'category' => $book->category?->name ?? 'Uncategorized',
+                'category_id' => $book->category_id,
                 'status' => $book->available_copies > 0 ? 'Available' : 'Borrowed',
                 'available' => $book->available_copies,
                 'total' => $book->total_copies,
@@ -79,18 +79,12 @@ class BooksController extends Controller
             'title' => ['required', 'string', 'max:255'],
             'author' => ['required', 'string', 'max:255'],
             'isbn' => ['required', 'string', 'max:255', 'unique:books,isbn'],
-            'category' => ['nullable', 'string', 'max:255'],
+            'category_id' => ['required', 'integer', 'exists:categories,id'],
             'copies' => ['required', 'integer', 'min:1'],
         ]);
 
-        $category = null;
-        if (! empty($data['category'])) {
-            $slug = Str::slug($data['category']);
-            $category = Category::firstOrCreate(['slug' => $slug], ['name' => $data['category']]);
-        }
-
         Book::create([
-            'category_id' => $category?->id,
+            'category_id' => $data['category_id'],
             'title' => $data['title'],
             'author' => $data['author'],
             'isbn' => $data['isbn'],
@@ -106,19 +100,13 @@ class BooksController extends Controller
         $data = $request->validate([
             'title' => ['required', 'string', 'max:255'],
             'author' => ['required', 'string', 'max:255'],
-            'category' => ['nullable', 'string', 'max:255'],
+            'category_id' => ['required', 'integer', 'exists:categories,id'],
         ]);
-
-        $category = null;
-        if (! empty($data['category'])) {
-            $slug = Str::slug($data['category']);
-            $category = Category::firstOrCreate(['slug' => $slug], ['name' => $data['category']]);
-        }
 
         $book->update([
             'title' => $data['title'],
             'author' => $data['author'],
-            'category_id' => $category?->id,
+            'category_id' => $data['category_id'],
         ]);
 
         return back()->with('status', 'Book updated.');

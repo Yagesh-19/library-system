@@ -1,4 +1,3 @@
-import { cn } from '@/lib/utils';
 import { Head, Link } from '@inertiajs/react';
 import {
     BookOpen,
@@ -25,6 +24,7 @@ import {
     SheetTitle,
     SheetTrigger,
 } from '@/components/ui/sheet';
+import { cn } from '@/lib/utils';
 
 export type LibraryRole = 'librarian' | 'admin' | 'student';
 

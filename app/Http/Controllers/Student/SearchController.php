@@ -54,6 +54,8 @@ class SearchController extends Controller
                 'title' => $book->title,
                 'author' => $book->author,
                 'tag' => $book->available_copies > 0 ? 'Available' : 'Reserved',
+                'available' => $book->available_copies,
+                'total' => $book->total_copies,
                 'genre' => $book->category?->name ?? 'General',
                 'cover' => $book->cover_url,
             ]);

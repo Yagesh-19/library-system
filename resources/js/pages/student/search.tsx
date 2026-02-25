@@ -1,10 +1,10 @@
+import { router, useForm } from '@inertiajs/react';
+import { useState } from 'react';
+import { toast } from 'sonner';
 import InputError from '@/components/input-error';
-import LibraryLayout from '@/layouts/library-layout';
 import { Dialog, DialogContent, DialogDescription, DialogFooter, DialogHeader, DialogTitle, DialogTrigger } from '@/components/ui/dialog';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
-import { router, useForm } from '@inertiajs/react';
-import { toast } from 'sonner';
-import { useState } from 'react';
+import LibraryLayout from '@/layouts/library-layout';
 
 type SearchProps = {
     filters: {
@@ -19,6 +19,8 @@ type SearchProps = {
         title: string;
         author: string;
         tag: string;
+        available: number;
+        total: number;
         genre: string;
         cover: string | null;
     }[];
@@ -134,11 +136,14 @@ export default function StudentSearch({ filters, categories, books }: SearchProp
                                         <span className="rounded-full bg-emerald-400/20 px-3 py-1 font-semibold text-emerald-200">
                                             {book.tag}
                                         </span>
-                                        <span className="text-slate-400">{book.genre}</span>
+                                        <span className="text-slate-400">{book.genre} • {book.available}/{book.total}</span>
                                     </div>
                                 </div>
                                 <DialogTrigger asChild>
-                                    <button className="mt-4 w-full rounded-full border border-emerald-400 px-4 py-2 text-sm font-semibold text-emerald-200">
+                                    <button
+                                        disabled={book.available < 1}
+                                        className="mt-4 w-full rounded-full border border-emerald-400 px-4 py-2 text-sm font-semibold text-emerald-200 disabled:cursor-not-allowed disabled:border-slate-600 disabled:text-slate-500"
+                                    >
                                         Request / Reserve
                                     </button>
                                 </DialogTrigger>
@@ -158,9 +163,7 @@ export default function StudentSearch({ filters, categories, books }: SearchProp
                                     <form
                                         onSubmit={(event) => {
                                             event.preventDefault();
-                                            reservationForm
-                                                .transform((data) => ({ ...data, book_id: book.id }))
-                                                
+                                            reservationForm.transform((data) => ({ ...data, book_id: book.id }));
                                             reservationForm.post('/student/reservations', {
                                                 onSuccess: () => {
                                                     toast.success('Reservation created.');
@@ -171,7 +174,7 @@ export default function StudentSearch({ filters, categories, books }: SearchProp
                                         }}
                                     >
                                         <button
-                                            disabled={reservationForm.processing}
+                                            disabled={reservationForm.processing || book.available < 1}
                                             className="rounded-full border border-emerald-400 px-4 py-2 text-sm font-semibold text-emerald-200"
                                         >
                                             Confirm Request
