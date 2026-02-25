@@ -16,6 +16,7 @@ import {
 } from 'lucide-react';
 import type { ComponentType, PropsWithChildren, ReactNode } from 'react';
 import { useState } from 'react';
+import CookieBanner from '@/components/cookie-banner';
 import {
     Sheet,
     SheetContent,
@@ -218,6 +219,7 @@ export default function LibraryLayout({ children, title, role, active, header }:
                     <main className="flex flex-1 flex-col gap-6">{children}</main>
                 </div>
             </div>
+            <CookieBanner role={role} />
         </div>
     );
 }
