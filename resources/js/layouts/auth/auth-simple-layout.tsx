@@ -14,7 +14,7 @@ export default function AuthSimpleLayout({ children, title, description }: AuthL
                                 <span className="text-lg font-semibold text-emerald-950">LM</span>
                             </div>
                             <div>
-                                <p className="text-xl font-semibold text-white">LibraryMS</p>
+                                <p className="text-xl font-semibold text-white">LibraSys</p>
                                 <p className="text-xs text-slate-400">Library Management System</p>
                             </div>
                         </Link>

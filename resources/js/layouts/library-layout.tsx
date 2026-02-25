@@ -96,7 +96,7 @@ function LogoMark({ subtitle }: { subtitle: string }) {
                 </svg>
             </div>
             <div>
-                <p className="text-xl font-semibold text-white">LibraryMS</p>
+                <p className="text-xl font-semibold text-white">LibraSys</p>
                 <p className="text-xs text-slate-400">{subtitle}</p>
             </div>
         </div>
@@ -148,7 +148,7 @@ export default function LibraryLayout({ children, title, role, active, header }:
                                 </SheetTrigger>
                                 <SheetContent side="left" className="border-[#1f2a3d] bg-[#0f172a] text-slate-100">
                                     <SheetHeader>
-                                        <SheetTitle className="text-white">LibraryMS</SheetTitle>
+                                        <SheetTitle className="text-white">LibraSys</SheetTitle>
                                         <SheetDescription className="text-slate-400">
                                             Navigate your workspace
                                         </SheetDescription>
