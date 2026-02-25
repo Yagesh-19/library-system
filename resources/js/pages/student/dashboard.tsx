@@ -35,12 +35,6 @@ export default function StudentDashboard({ stats, notifications, recommendations
             icon: CalendarClock,
             tone: 'from-sky-400/20 to-sky-400/5',
         },
-        {
-            label: 'Fines',
-            value: `$${stats.fines}`,
-            icon: CircleAlert,
-            tone: 'from-rose-400/20 to-rose-400/5',
-        },
     ];
 
     return (
@@ -50,7 +44,7 @@ export default function StudentDashboard({ stats, notifications, recommendations
                 <p className="text-sm text-slate-400">Quick snapshot of your library activity.</p>
             </section>
 
-            <section className="grid gap-6 md:grid-cols-3">
+            <section className="grid gap-6 md:grid-cols-2">
                 {statCards.map((stat) => {
                     const Icon = stat.icon;
                     return (
