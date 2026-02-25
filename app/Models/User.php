@@ -23,7 +23,10 @@ class User extends Authenticatable
         'name',
         'email',
         'role',
+        'is_active',
         'password',
+        'approved_at',
+        'is_active',
     ];
 
     /**
@@ -49,6 +52,7 @@ class User extends Authenticatable
             'email_verified_at' => 'datetime',
             'password' => 'hashed',
             'role' => UserRole::class,
+            'approved_at' => 'datetime',
             'two_factor_confirmed_at' => 'datetime',
         ];
     }
@@ -66,5 +70,20 @@ class User extends Authenticatable
     public function admin()
     {
         return $this->hasOne(Admin::class);
+    }
+
+    public function borrowings()
+    {
+        return $this->hasMany(Borrowing::class);
+    }
+
+    public function reservations()
+    {
+        return $this->hasMany(Reservation::class);
+    }
+
+    public function notifications()
+    {
+        return $this->hasMany(LibraryNotification::class);
     }
 }

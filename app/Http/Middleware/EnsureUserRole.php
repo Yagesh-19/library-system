@@ -28,6 +28,10 @@ class EnsureUserRole
             abort(403);
         }
 
+        if (in_array($user->role?->value ?? $user->role, ['student', 'librarian'], true) && ! $user->approved_at) {
+            abort(403);
+        }
+
         return $next($request);
     }
 }

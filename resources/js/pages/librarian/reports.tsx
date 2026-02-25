@@ -1,21 +1,19 @@
-import LibraryLayout from '@/layouts/library-layout';
+import { Download, Star, TriangleAlert } from 'lucide-react';
 import { Dialog, DialogContent, DialogDescription, DialogFooter, DialogHeader, DialogTitle, DialogTrigger } from '@/components/ui/dialog';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
-import { Download, Star, TriangleAlert } from 'lucide-react';
+import LibraryLayout from '@/layouts/library-layout';
 
-const popular = [
-    { rank: '1', title: 'The Alchemist', count: '45' },
-    { rank: '2', title: 'Harry Potter', count: '38' },
-    { rank: '3', title: 'Pride and Prejudice', count: '32' },
-];
+type ReportsProps = {
+    metrics: {
+        issued: number;
+        returned: number;
+        current: number;
+    };
+    popular: { rank: number; title: string; count: number }[];
+    overdue: { label: string; value: number; color: string }[];
+};
 
-const overdue = [
-    { label: 'Critical (>30 days)', value: '8', color: 'bg-rose-100 text-rose-700' },
-    { label: 'Warning (15-30 days)', value: '15', color: 'bg-amber-100 text-amber-700' },
-    { label: 'Recent (1-14 days)', value: '12', color: 'bg-sky-100 text-sky-700' },
-];
-
-export default function LibrarianReports() {
+export default function LibrarianReports({ metrics, popular, overdue }: ReportsProps) {
     return (
         <LibraryLayout title="Reports & Analytics" role="librarian" active="reports">
             <section className="flex flex-wrap items-center justify-between gap-4">
@@ -77,15 +75,15 @@ export default function LibrarianReports() {
                     <div className="mt-6 space-y-4">
                         <div className="flex items-center justify-between text-sm">
                             <span className="text-slate-500">Books Issued</span>
-                            <span className="text-lg font-semibold text-slate-900">245</span>
+                            <span className="text-lg font-semibold text-slate-900">{metrics.issued}</span>
                         </div>
                         <div className="flex items-center justify-between text-sm">
                             <span className="text-slate-500">Books Returned</span>
-                            <span className="text-lg font-semibold text-slate-900">198</span>
+                            <span className="text-lg font-semibold text-slate-900">{metrics.returned}</span>
                         </div>
                         <div className="flex items-center justify-between text-sm">
                             <span className="text-slate-500">Currently Borrowed</span>
-                            <span className="text-lg font-semibold text-slate-900">47</span>
+                            <span className="text-lg font-semibold text-slate-900">{metrics.current}</span>
                         </div>
                     </div>
                 </div>
