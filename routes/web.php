@@ -1,6 +1,8 @@
 <?php
 
 use Illuminate\Support\Facades\Route;
+use Illuminate\Http\Request;
+use App\Enums\UserRole;
 use Inertia\Inertia;
 use Laravel\Fortify\Features;
 use App\Http\Controllers\Student\BorrowingController;
@@ -32,8 +34,16 @@ Route::middleware('guest')->group(function () {
 });
 
 Route::middleware(['auth', 'verified'])->group(function () {
-    Route::get('dashboard', function () {
-        return Inertia::render('dashboard');
+    Route::get('dashboard', function (Request $request) {
+        if ($request->user()->role === UserRole::Admin) {
+            return redirect()->route('admin.dashboard');
+        } elseif ($request->user()->role === UserRole::Librarian) {
+            return redirect()->route('librarian.dashboard');
+        } elseif ($request->user()->role === UserRole::Student) {
+            return redirect()->route('student.dashboard');
+        }
+        abort(403);
+        
     })->name('dashboard');
 
     Route::prefix('librarian')->name('librarian.')->middleware(['role:librarian', 'banned'])->group(function () {
